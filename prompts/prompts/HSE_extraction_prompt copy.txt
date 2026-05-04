@@ -1,0 +1,213 @@
+# HSE Extraction Prompt — Full 10-Section Schema
+
+> This is the exact prompt used in the Day 2 comparison study. Both ChatGPT and Claude received this identical prompt along with the ExxonMobil 2025 Sustainability Report PDF.
+
+---
+
+## Prompt
+
+```
+You are a senior HSE data analyst. Extract ALL key information from this 
+HSE report with zero omissions. Structure your output exactly as specified 
+below. Write NULL for any missing field. Flag ambiguous values.
+
+═══════════════════════════════════════════════
+SECTION 1 — REPORT METADATA
+═══════════════════════════════════════════════
+Extract:
+- Report Title
+- Reporting Organization / Company Name
+- Report Period (Start Date, End Date)
+- Publication / Issue Date
+- Report Version or ID
+- Applicable Standards (ISO 14001, ISO 45001, GRI, IOGP, etc.)
+- Third-Party Assurance Provider (if any)
+- Assurance Level (Reasonable / Limited / None)
+
+═══════════════════════════════════════════════
+SECTION 2 — SAFETY PERFORMANCE KPIs
+═══════════════════════════════════════════════
+Extract ALL numeric safety metrics. For each:
+
+| KPI Name | Value | Unit | Year | Benchmark | Trend vs Prior Year |
+|----------|-------|------|------|-----------|---------------------|
+
+Required KPIs to look for (write NULL if absent):
+- Total Recordable Incident Rate (TRIR)
+- Lost Time Incident Rate (LTIR)
+- Fatal Accident Rate (FAR)
+- Number of Fatalities (employees / contractors separately)
+- Near-Miss Count
+- First Aid Cases
+- Process Safety Tier 1 Events
+- Process Safety Tier 2 Events
+- Days Away From Work Rate (DAFWR)
+- Severity Rate
+- Work Hours (total, employees, contractors)
+- Contractor vs Employee split for all rates
+
+═══════════════════════════════════════════════
+SECTION 3 — HEALTH PERFORMANCE KPIs
+═══════════════════════════════════════════════
+Extract ALL numeric health metrics:
+
+| KPI Name | Value | Unit | Year | Notes |
+|----------|-------|------|------|-------|
+
+Required KPIs to look for:
+- Occupational Illness Rate
+- Occupational Illness Cases (count)
+- Health Surveillance Coverage (%)
+- Workforce Health Program Participation (%)
+- Medical Removal Cases
+- Mental Health Program Metrics (if any)
+
+═══════════════════════════════════════════════
+SECTION 4 — ENVIRONMENTAL PERFORMANCE KPIs
+═══════════════════════════════════════════════
+Extract ALL numeric environmental metrics:
+
+| KPI Name | Value | Raw Value | Converted Value | Unit | Year | Scope | Source Page |
+|----------|-------|-----------|-----------------|------|------|-------|-------------|
+
+Conversion rules — apply automatically:
+- $XM → multiply by 1,000,000
+- $XB → multiply by 1,000,000,000
+- X% → keep as numeric (e.g., 25% → 25)
+- ">X" or "~X" → extract numeric, flag ambiguity = YES
+- Pounds → note as non-SI
+
+Required KPIs to look for:
+- GHG Emissions Scope 1 (absolute + intensity)
+- GHG Emissions Scope 2 (market-based + location-based)
+- GHG Emissions Scope 3 (by category if available)
+- Methane Emissions (absolute + intensity)
+- Flaring Volume
+- NOx Emissions
+- SOx Emissions
+- VOC Emissions
+- Freshwater Withdrawal (by source)
+- Freshwater Consumption
+- Water Intensity (by business unit)
+- Wastewater Discharged
+- Total Waste Generated (hazardous / non-hazardous)
+- Waste Recycled / Diverted from Landfill (%)
+- Waste to Landfill
+- Hydrocarbon Spills (count + volume)
+- Non-Hydrocarbon Spills (count + volume)
+- Energy Consumption (total + by fuel type)
+- Energy Intensity
+- Biodiversity Impact Area (hectares)
+- Land Remediated
+- Environmental Fines and Penalties
+
+═══════════════════════════════════════════════
+SECTION 5 — INCIDENTS & EVENTS LOG
+═══════════════════════════════════════════════
+For EVERY incident, event, or case mentioned extract:
+
+| Incident ID | Date | Location | Facility Type | Incident Type | 
+| Severity Level | Root Cause | Corrective Action | Status | Source Page |
+
+Severity classification — standardize to:
+CRITICAL / HIGH / MEDIUM / LOW / NEAR-MISS
+
+═══════════════════════════════════════════════
+SECTION 6 — REGULATORY & COMPLIANCE
+═══════════════════════════════════════════════
+Extract:
+- List of applicable regulations mentioned
+- Compliance status for each (COMPLIANT / NON-COMPLIANT / PARTIAL / NULL)
+- Number of regulatory violations (count)
+- Fines issued (amount + currency + year)
+- Ongoing investigations (count + description)
+- Permits held (count)
+- Permit violations (count)
+- Audit findings (count by severity)
+
+═══════════════════════════════════════════════
+SECTION 7 — TARGETS & COMMITMENTS
+═══════════════════════════════════════════════
+For every target or goal mentioned extract:
+
+| Target Description | Baseline Year | Baseline Value | 
+| Target Year | Target Value | Current Value | 
+| % Progress | On Track (Yes/No/NULL) | Source Page |
+
+═══════════════════════════════════════════════
+SECTION 8 — PROGRAMS & INITIATIVES
+═══════════════════════════════════════════════
+For every HSE program or initiative mentioned extract:
+
+| Program Name | Type (Safety/Health/Environment/Combined) |
+| Geographic Scope | Investment Amount | People Reached |
+| Start Year | KPI/Outcome Reported | Source Page |
+
+═══════════════════════════════════════════════
+SECTION 9 — WORKFORCE & CONTRACTOR DATA
+═══════════════════════════════════════════════
+Extract:
+- Total Workforce (headcount)
+- Employee Count
+- Contractor Count
+- Total Work Hours (employees + contractors)
+- Training Hours (total + per employee)
+- HSE Training Completion Rate (%)
+- Number of HSE Drills Conducted
+- Emergency Response Exercises (count)
+
+═══════════════════════════════════════════════
+SECTION 10 — DATA QUALITY FLAGS
+═══════════════════════════════════════════════
+After extraction, produce a quality audit table:
+
+| Row/KPI Reference | Flag Type | Description | Recommended Action |
+
+Flag types to apply:
+- APPROXIMATION → value uses ~, >, <, "approximately", "about"
+- MULTI-YEAR → value spans multiple years without annual breakdown
+- NON-SI UNIT → value in non-metric unit (pounds, gallons, etc.)
+- RESTATED → value differs from prior year report for same period
+- SCOPE UNCLEAR → it is unclear if value covers operated assets only,
+                   equity share, or full value chain
+- DUPLICATE → same metric appears in multiple sections
+- MISSING DENOMINATOR → rate/intensity given without base quantity
+- UNVERIFIED → no third-party assurance for this data point
+
+═══════════════════════════════════════════════
+OUTPUT RULES — MANDATORY
+═══════════════════════════════════════════════
+1. Do NOT summarize. Extract every numeric KPI — zero omissions.
+2. Do NOT interpret or infer values not explicitly stated.
+3. Write NULL for every missing field — never leave blank.
+4. Keep raw values AND converted values in separate columns.
+5. Record source page number for every single row.
+6. If a metric appears in multiple sections of the report,
+   extract all instances as separate rows and note DUPLICATE flag.
+7. Standardize all years to YYYY format.
+8. Standardize all currencies to USD where conversion is possible;
+   note original currency if not USD.
+9. For every rate metric confirm and record the denominator
+   (e.g., per 200,000 work hours vs per 1,000,000 work hours).
+10. Output sections sequentially — do not skip any section
+    even if all values are NULL.
+```
+
+---
+
+## Notes on Prompt Design
+
+### What worked well
+- The mandatory NULL rule made omissions visible and auditable
+- Explicit KPI checklists per section ensured both models had the same target list
+- Denominator specification (per 200K vs per 1M work hours) caught a common HSE benchmarking confusion
+- Dual raw/converted columns made unit approximations explicit
+
+### What could be improved
+- Adding "prioritise structured data tables and appendices over narrative text" may help models that exhibit positional bias toward document introductions
+- Specifying "page 67-69 contains the primary performance data table" as an explicit hint could guide models to the right source
+- Adding "do not use narrative trend statements as substitutes for actual measured values" could prevent the 25% / emission value confusion seen in ChatGPT's output
+
+---
+
+*Prompt version used in study: v1.0 (May 2026)*

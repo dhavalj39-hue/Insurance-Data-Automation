@@ -1,0 +1,53 @@
+Act as a senior financial and insurance data analyst specializing in Lloyd’s syndicate reporting. You are given a Lloyd’s syndicate annual report (PDF). Your task has TWO DISTINCT PARTS. Complete them separately.
+PART 1 — STRUCTURED FINANCIAL DATA EXTRACTION
+Extract ONLY the following fields and return in a structured table: FIELDS:
+
+1. Syndicate Number
+2. Managing Agent Name
+3. Year of Account
+4. Gross Written Premium (GWP)
+5. Net Written Premium
+6. Net Claims Incurred
+7. Net Operating Expenses
+8. Profit or Loss Before Tax
+9. Combined Ratio
+10. Total Assets
+11. Members' Funds RULES:
+
+* For each field return: • Field Name • Value • Currency Unit (e.g., £000s, £m) • Page Number • Source Label (exact text) • Confidence (High/Medium/Low)
+* If not explicitly found → return NULL
+* Do NOT calculate or infer values
+* If multiple years exist → select ONLY the most recent reporting year
+* Prefer values from primary financial statements over notes
+* Preserve negative signs and formatting
+* Do NOT mix gross and net values OUTPUT FORMAT (PART 1): | Field Name | Value | Currency Unit | Page Number | Source Label | Confidence | ================================================== PART 2 — QUALITATIVE ANALYSIS ================================================== Extract the following insights from narrative sections such as:
+* Strategic Report
+* Underwriting Review
+* Risk Management
+* Business Overview
+A. MAIN CLASSES OF BUSINESS
+
+* List the primary lines of business written by the syndicate
+* Use wording as close as possible to the report
+* Limit to 3–6 key classes
+B. TOP 3 RISK FACTORS
+
+* Identify the 3 most significant risks mentioned
+* Only include risks explicitly discussed (e.g., underwriting risk, market risk, catastrophe risk)
+* Avoid generic or assumed risks
+C. ONE-SENTENCE PERFORMANCE SUMMARY
+
+* Provide a concise summary (max 25 words) covering: • profitability • major drivers (claims, premiums, market conditions) RULES:
+* Do NOT infer beyond the report content
+* Do NOT generalize
+* If unclear → return NULL OUTPUT FORMAT (PART 2): A. Classes of Business:
+* ... B. Top 3 Risk Factors:
+
+1. ...
+2. ...
+3. ... C. Performance Summary: ... ================================================== FINAL INSTRUCTIONS ==================================================
+
+* Keep Part 1 and Part 2 clearly separated
+* Do NOT mix financial and narrative outputs
+* Do NOT include explanations
+* Only return structured output

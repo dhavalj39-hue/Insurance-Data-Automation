@@ -1,0 +1,30 @@
+Act as a data analyst.
+
+Extract only environmental quantitative metrics from pages 5–10 of the report.
+
+Output in structured table format with columns:
+
+* Category
+* Sub-category
+* Metric Name
+* Value
+* Unit
+* Year
+* Source Page
+
+Instructions:
+
+* Extract only measurable numeric data (numbers, %, counts, currency)
+* Ignore descriptive text
+* Standardize units (Percent, USD, Count, Years)
+* Convert values (e.g., $200M → 200000000)
+* If multiple years are mentioned, keep as given
+* Capture exact values without interpretation
+
+Also include:
+
+* unit_issue (Yes/No)
+* ambiguity_flag (Yes/No)
+* notes
+
+Do not summarize. Do not skip any numeric KPI.
