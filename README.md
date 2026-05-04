@@ -1,70 +1,181 @@
 # AI-Based Data Extraction Project
 
 ## Objective
-Compare how well ChatGPT and Claude extract structured HSE data 
-from a real sustainability report — same prompt, same document, 
-scored against the source.
-
-**Source:** ExxonMobil 2025 Sustainability Report (71 pages)  
-**Models:** ChatGPT (GPT-4o) vs Claude (Sonnet 4.5)  
-**Data points validated:** 225 across 10 sections
+Extract structured financial and insurance data from PDF reports using AI (Claude),
+build a clean master database, and progressively move toward SQL-based querying
+and automated pipelines — with zero prior coding or SQL knowledge required.
 
 ---
 
-## Progress Log
+## Project Progress
 
-### ✅ Day 1 — First Attempt (Raw Prompt)
-- Gave both models a basic unstructured prompt
-- Spotted first red flag: ChatGPT showed SOx/NOx/VOC = "25%" 
-  (should be 0.05/0.11/0.13 million metric tons)
-- Claude got the data table values right; ChatGPT seemed to 
-  only read the Executive Summary
-- Decided to build a proper schema for Day 2
+### Day 1
+- Created extraction prompt
+- Extracted environmental KPIs (pages 5–10)
+- Identified data quality issues
 
-### ✅ Day 2 — Built 10-Section Schema, Re-ran Both Models
-- Designed structured extraction prompt with mandatory NULL rules, 
-  page citations, 5-year time series requirement
-- Re-ran both models with the same schema
-- Gap got clearer: Claude followed the schema completely; 
-  ChatGPT still missed the performance data table (pp. 67–69)
-- Found 2 more errors in ChatGPT: wrong water target metric, 
-  environmental fines showing NULL when data exists
+### Day 2
+- Improved prompt structure
+- Cleaned dataset
+- Started building dashboard concept
 
-### ✅ Day 3 — Validated All 225 Data Points
-- Cross-checked every extracted value against source document
-- Final score: ChatGPT 48/225 (21%) vs Claude 225/225 (100%)
-- 3 confirmed factual errors in ChatGPT output
-- Root cause: ChatGPT appears to have read Executive Summary only
+### Day 3
+- Refined extraction methodology
+- Validated data quality
+- Planned database structure
+
+### Day 4 — Lloyd's Syndicate Financial Data Extraction & Master Database Build
+**Date:** 04 May 2026
+
+#### What was done today
+
+**1. PDF Ingestion & AI-Assisted Extraction**
+- Uploaded and processed **3 Lloyd's of London syndicate annual report PDFs**:
+  - `Aegis_London.pdf` → Syndicate 1225 (AEGIS Managing Agency Ltd) — FY2014
+  - `ACE_Underwriting_Agencies_Limited.pdf` → Syndicate 2488 (ACE Underwriting Agencies Ltd) — FY2014
+  - `pembroke.pdf` → Syndicate 6110 (Pembroke Managing Agency Ltd) — FY2015 Annual + 2013 Closed UY
+
+**2. Structured Financial Data Extraction (Part 1)**
+Used Claude as a senior insurance data analyst to extract **11 key financial fields** per syndicate:
+
+| Field | Description |
+|---|---|
+| Syndicate Number | Unique Lloyd's identifier |
+| Managing Agent Name | Firm managing the syndicate |
+| Year of Account | Reporting year |
+| Gross Written Premium (GWP) | Total premiums before reinsurance |
+| Net Written Premium | After outward reinsurance |
+| Net Claims Incurred | Claims net of reinsurance recoveries |
+| Net Operating Expenses | Acquisition + admin costs |
+| Profit / (Loss) Before Tax | Bottom line result |
+| Combined Ratio | Claims + expenses / net earned premium |
+| Total Assets | Balance sheet total |
+| Members' Funds | Capital / members' balances |
+
+Each field extracted with: **Value · Currency Unit · Page Number · Source Label · Confidence Level**
+
+**3. Qualitative Analysis (Part 2)**
+For each syndicate extracted:
+- **Main classes of business** (e.g. Property, Marine, Financial Lines, Political Risk)
+- **Top 3 risk factors** (e.g. Underwriting Risk, Claims Reserving Risk, Credit Risk)
+- **One-sentence performance summary** (≤25 words)
+
+**4. Excel Output — Structured Report**
+Generated `Lloyd_Syndicate_Report.xlsx` with 3 tabs:
+- `Part 1 – Financial Data` → all 11 fields, both syndicates side-by-side with source references
+- `Part 2 – Qualitative Analysis` → risks, business lines, performance summaries
+- `Comparison Dashboard` → clean KPI comparison table
+
+**5. Master Database Build**
+Built `Lloyd_Syndicates_MASTER_v1.xlsx` — a permanent, growing database with 5 tabs:
+
+| Sheet | Purpose |
+|---|---|
+| 📋 MASTER TABLE | Living database — 4 records, add new rows per PDF |
+| 🗄️ SQL READY | Flat CSV-exportable table for SQLite / BigQuery |
+| 💡 Sample SQL Queries | 10 ready queries — plain English → SQL via Claude |
+| 📊 Comparison Dashboard | Side-by-side view of all 4 records |
+| 📝 Version Log | Audit trail of every data addition |
+
+**6. Data Consolidation Strategy**
+- All values normalised to **£000s** (S1225 converted from £m × 1000)
+- One row = one syndicate + one year (SQL-ready structure)
+- Auto-calculated fields: Loss Ratio %, Profit Margin %, Asset Turnover
+- Template row included for adding future PDFs in under 2 minutes
+
+**7. Pipeline Visualisation**
+Built end-to-end pipeline flowcharts:
+- PDF ingestion → extraction → validation → qualitative analysis → Excel → output
+- Next-stage roadmap: Excel → AI-assisted SQL → live dashboard → full automation
+- Data consolidation strategy: scattered PDFs → master table → SQL database
+
+#### Key Results — Day 4
+
+| Syndicate | GWP (£000s) | Profit (£000s) | Combined Ratio |
+|---|---|---|---|
+| 1225 AEGIS (2014) | 371,000 | 60,500 | 83.5% |
+| 2488 ACE (2014) | 375,327 | 154,645 | **61.6% ✅ best** |
+| 6110 Pembroke Annual (2015) | 1,140 | 1,242 | 67.7% |
+| 6110 Pembroke Closed UY (2013) | 40,988 | 922 | NULL |
+
+> All 4 syndicates were profitable. ACE Syndicate 2488 was the standout performer
+> with a combined ratio of 61.6% and profit of £154.6m, driven by £103.7m of prior
+> year reserve releases and £41.0m investment return.
+
+#### Tools & Methods Used
+- **Claude (Sonnet 4)** — PDF extraction, financial analysis, qualitative review
+- **Python / openpyxl** — Excel workbook generation with formatting
+- **SVG visualisations** — Pipeline and roadmap flowcharts built inline
+- **No SQL written manually** — all queries generated by Claude from plain English
+
+#### Files Produced Today
+```
+outputs/
+├── Lloyd_Syndicate_Report.xlsx          # Part 1 & 2 extraction output
+├── Syndicate_Master_Database.xlsx       # Initial master build
+├── Lloyd_Syndicate_MasterDB.xlsx        # Pembroke data (uploaded)
+└── Lloyd_Syndicates_MASTER_v1.xlsx      # FINAL merged master database ← USE THIS
+```
 
 ---
 
-## Final Scorecard
+## Current Database Status
 
-| Section | ChatGPT | Claude |
-|---------|---------|--------|
-| Safety KPIs | 8/42 (19%) | 42/42 (100%) |
-| Environmental KPIs | 7/45 (16%) | 45/45 (100%) |
-| Regulatory/Compliance | 5/14 (36%) | 14/14 (100%) |
-| Programs & Initiatives | 2/27 (7%) | 27/27 (100%) |
-| Workforce Data | 5/28 (18%) | 28/28 (100%) |
-| **TOTAL** | **48/225 (21%)** | **225/225 (100%)** |
-
----
-
-## Files
-
-- `prompts/` → 10-section HSE extraction prompt (reusable)
-- `docs/` → daily progress notes (Day 1, 2, 3)
-- `validation/` → 225-point scorecard vs source document
+| Metric | Value |
+|---|---|
+| Total Syndicates | 3 (1225, 2488, 6110) |
+| Total Records | 4 |
+| Years Covered | 2013, 2014, 2015 |
+| PDFs Processed | 3 |
+| All values in | £000s (normalised) |
 
 ---
 
-## Key Finding
+## Next Steps (Day 5+)
 
-> ChatGPT's output *looked* professional but contained 3 factual errors.  
-> The most dangerous: SOx/NOx/VOC shown as "25%" instead of actual  
-> million metric ton values — plausible enough to miss in a quick review.
+- [ ] Process more Lloyd's syndicate PDFs → add rows to master table
+- [ ] Export SQL READY sheet as CSV → load into SQLite / DB Browser
+- [ ] Ask Claude plain-English questions → get SQL queries → run them
+- [ ] Connect master table to Power BI / Looker Studio for live dashboard
+- [ ] Build automated pipeline: new PDF in → extraction → row added automatically
 
 ---
 
-*Personal learning project — May 2026*
+## Repository Structure
+
+```
+AI-Sustainability-Data-Extraction/
+│
+├── README.md                    ← this file
+├── prompts/                     ← AI extraction prompts
+├── data/                        ← extracted datasets (Excel files)
+├── progress/                    ← daily notes
+│   ├── day1_notes.md
+│   ├── day2_notes.md
+│   ├── day3_notes.md
+│   └── day4_notes.md            ← today's detailed log
+└── outputs/                     ← generated Excel workbooks
+```
+
+---
+
+## How to Add New Data (No Coding Required)
+
+1. Upload a new Lloyd's PDF to Claude
+2. Ask: *"Extract the 11 financial fields using the same format as before"*
+3. Open `Lloyd_Syndicates_MASTER_v1.xlsx` → `📋 MASTER TABLE`
+4. Copy the yellow template row → paste below last data row → fill in values
+5. Update `📝 VERSION LOG` with date, PDF name, total records
+6. Save the file
+
+> **Rule:** One row per syndicate per year. All values in £000s.
+
+---
+
+## About
+
+AI-assisted financial data extraction and database building project.
+Demonstrating that structured data pipelines can be built from PDFs
+with zero SQL knowledge using AI as the extraction and query engine.
+
+**Stack:** Claude AI · Python · openpyxl · Excel · (SQLite coming soon)
