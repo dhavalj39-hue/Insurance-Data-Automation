@@ -1,30 +1,40 @@
 # Lloyd's Syndicate Data Automation Portfolio
-**Goal:** Build a full Lloyd's data pipeline using AI + SQL + Power BI
+**Owner:** Shraddha Joshi
+**Start Date:** 02-05-2026
+**Goal:** Build full Lloyd's data pipeline — AI + SQL + Power BI
+
+---
 
 ## What This Project Does
 - Extracts financial data from Lloyd's syndicate PDFs using Claude AI
-- Validates data quality using SQL queries
+- Validates and queries data using SQL in DB Browser
 - Visualises performance in Power BI dashboard
 - Automates the full pipeline end to end
 
-## Progress
-| Day | Task | Status |
+---
+
+## 30-Day Progress Tracker
+
+| Day | Focus | Status |
 |---|---|---|
-| 1-3 | First extraction attempts | Done |
+| 1-3 | First AI extraction attempts | Done |
 | 4 | First Lloyd's PDF extraction | Done |
 | 5 | Refined prompts + comparison | Done |
-| 6 | Prompt library built | Done |
-| 7 | SQL database created | In Progress |
+| 6 | Lloyd's Prompt Library built | Done |
+| 7 | SQL database created + first queries | Done |
+| 8 | WHERE filter queries | In Progress |
+| 9 | NULL checks + data quality | Upcoming |
+| 10 | GROUP BY analysis | Upcoming |
+
+---
 
 ## Tools Used
-- Claude AI — PDF extraction
+- Claude AI — PDF data extraction
 - ChatGPT — data validation
 - DB Browser for SQLite — SQL queries
-- Power BI — dashboard
+- Power BI — dashboard (Phase 3)
+- Power Automate — automation (Phase 4)
+
+---
 
 ## Folder Structure
-- Phase-1-AI-Tools/ — prompts and extractions
-- Phase-2-SQL/ — all SQL queries
-- Phase-3-PowerBI/ — dashboard screenshots
-- Phase-4-Automation/ — pipeline files
-- Phase-5-Job-Ready/ — presentation materials
