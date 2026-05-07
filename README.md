@@ -1,5 +1,4 @@
 # Lloyd's Syndicate Data Automation Portfolio
-**Owner:** Shraddha Joshi
 **Start Date:** 02-05-2026
 **Goal:** Build full Lloyd's data pipeline — AI + SQL + Power BI
 
