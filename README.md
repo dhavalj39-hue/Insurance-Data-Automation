@@ -1,6 +1,6 @@
 # Lloyd's Syndicate Data Automation Portfolio
 
-**Owner:** Shraddha Joshi
+**Owner:** Dhaval Joshi
 **Start Date:** 02-05-2026
 **Target Role:** Lead Data Operations
 
