@@ -111,30 +111,32 @@ Key learning: Use `100.0` not `100` for percentage division in SQLite — intege
 
 ## Data Schema
 
-All syndicate data is stored in `lloyds_syndicate_data.db` (SQLite).
+All syndicate data is stored in `lloyds_syndicate_data.db` (SQLite).  
+Table name: `SQL Master files_fixed`
 
 ```sql
-CREATE TABLE syndicate_financials (
-    record_id                INTEGER PRIMARY KEY,
-    syndicate_number         TEXT,
-    managing_agent           TEXT,
-    year_of_account          TEXT,
-    gross_written_premium    REAL,
-    net_written_premium      REAL,
-    gross_claims_paid        REAL,
-    net_claims_incurred      REAL,
-    net_operating_expenses   REAL,
-    profit_loss_before_tax   REAL,
-    combined_ratio           REAL,
-    total_assets             REAL,
-    members_funds            REAL,
-    currency_unit            TEXT,
-    data_source              TEXT,
-    extraction_date          TEXT
+CREATE TABLE "SQL Master files_fixed" (
+    syndicate_number     INT,     -- Unique syndicate identifier
+    syndicate_name       TEXT,    -- Full name of the syndicate
+    managing_agent       TEXT,    -- Agent responsible for running the syndicate
+    year_of_account      INT,     -- Underwriting year
+    report_type          TEXT,    -- Type of Lloyd's report
+    gwp_000s             REAL,    -- Gross Written Premium (£000s)
+    nwp_000s             REAL,    -- Net Written Premium (£000s)
+    net_claims_000s      REAL,    -- Net Claims Incurred (£000s)
+    net_opex_000s        REAL,    -- Net Operating Expenses (£000s)
+    pbt_000s             REAL,    -- Profit / Loss Before Tax (£000s)
+    combined_ratio_pct   REAL,    -- Combined Ratio % — under 100 = profitable
+    total_assets_000s    REAL,    -- Total Assets (£000s)
+    members_funds_000s   REAL,    -- Members Funds / Capital (£000s)
+    currency_unit        TEXT,    -- Currency unit as stated in source PDF
+    source_doc           TEXT,    -- Source PDF filename or reference
+    notes                TEXT     -- Any extraction notes or flags
 );
 ```
 
-**Note:** All figures in £000s unless otherwise stated. Combined ratio under 100 = profitable underwriting.
+**Column naming convention:** `_000s` suffix = figures in £thousands. `_pct` suffix = percentage value.  
+**Key rule:** `combined_ratio_pct` under 100 = profitable underwriting. Above 100 = loss.
 
 ---
 
