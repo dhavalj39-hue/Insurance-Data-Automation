@@ -1,9 +1,9 @@
 -- ============================================================
 -- DAY 9 — COUNT & NULL — Data Quality Check
 -- Lloyd's Syndicate Data Portfolio
+-- Table: "SQL Master files_fixed"
 -- Phase 2: SQL Basics
 -- ============================================================
--- This is your automated validation work.
 -- Run these queries after EVERY new batch of data you add.
 -- Record completeness rate in your notebook each week.
 -- ============================================================
@@ -16,17 +16,18 @@
 -- Returns 1 row showing missing count per key field
 -- --------------------------------------------------------
 SELECT
-    COUNT(*)                                                         AS total_syndicates,
-    SUM(CASE WHEN gross_written_premium  IS NULL THEN 1 ELSE 0 END)  AS missing_gwp,
-    SUM(CASE WHEN net_written_premium    IS NULL THEN 1 ELSE 0 END)  AS missing_net_premium,
-    SUM(CASE WHEN net_claims_incurred    IS NULL THEN 1 ELSE 0 END)  AS missing_claims,
-    SUM(CASE WHEN net_operating_expenses IS NULL THEN 1 ELSE 0 END)  AS missing_expenses,
-    SUM(CASE WHEN combined_ratio         IS NULL THEN 1 ELSE 0 END)  AS missing_ratio,
-    SUM(CASE WHEN profit_loss_before_tax IS NULL THEN 1 ELSE 0 END)  AS missing_profit,
-    SUM(CASE WHEN total_assets           IS NULL THEN 1 ELSE 0 END)  AS missing_assets,
-    SUM(CASE WHEN members_funds          IS NULL THEN 1 ELSE 0 END)  AS missing_members_funds,
-    SUM(CASE WHEN managing_agent         IS NULL THEN 1 ELSE 0 END)  AS missing_agent
-FROM syndicate_financials;
+    COUNT(*)                                                       AS total_syndicates,
+    SUM(CASE WHEN syndicate_name       IS NULL THEN 1 ELSE 0 END)  AS missing_syndicate_name,
+    SUM(CASE WHEN managing_agent       IS NULL THEN 1 ELSE 0 END)  AS missing_agent,
+    SUM(CASE WHEN gwp_000s             IS NULL THEN 1 ELSE 0 END)  AS missing_gwp,
+    SUM(CASE WHEN nwp_000s             IS NULL THEN 1 ELSE 0 END)  AS missing_nwp,
+    SUM(CASE WHEN net_claims_000s      IS NULL THEN 1 ELSE 0 END)  AS missing_claims,
+    SUM(CASE WHEN net_opex_000s        IS NULL THEN 1 ELSE 0 END)  AS missing_opex,
+    SUM(CASE WHEN pbt_000s             IS NULL THEN 1 ELSE 0 END)  AS missing_pbt,
+    SUM(CASE WHEN combined_ratio_pct   IS NULL THEN 1 ELSE 0 END)  AS missing_ratio,
+    SUM(CASE WHEN total_assets_000s    IS NULL THEN 1 ELSE 0 END)  AS missing_assets,
+    SUM(CASE WHEN members_funds_000s   IS NULL THEN 1 ELSE 0 END)  AS missing_members_funds
+FROM "SQL Master files_fixed";
 
 
 -- --------------------------------------------------------
@@ -41,72 +42,71 @@ SELECT
     ROUND(
         100.0 * SUM(
             CASE WHEN
-                combined_ratio         IS NOT NULL
-                AND profit_loss_before_tax IS NOT NULL
-                AND gross_written_premium  IS NOT NULL
+                combined_ratio_pct IS NOT NULL
+                AND pbt_000s       IS NOT NULL
+                AND gwp_000s       IS NOT NULL
             THEN 1 ELSE 0 END
         ) / COUNT(*),
     1) AS completeness_rate_percent
-FROM syndicate_financials;
+FROM "SQL Master files_fixed";
 
 
 -- --------------------------------------------------------
 -- QUERY 3: Row-by-row status check — MISSING or OK
 -- Shows exactly which syndicates have gaps
--- Use this to decide which PDFs to re-extract
+-- Use this to decide which PDFs to re-extract from Claude
 -- --------------------------------------------------------
 SELECT
     syndicate_number,
+    syndicate_name,
     managing_agent,
     year_of_account,
-    CASE WHEN gross_written_premium  IS NULL THEN 'MISSING' ELSE 'OK' END AS gwp_status,
-    CASE WHEN net_claims_incurred    IS NULL THEN 'MISSING' ELSE 'OK' END AS claims_status,
-    CASE WHEN net_operating_expenses IS NULL THEN 'MISSING' ELSE 'OK' END AS expenses_status,
-    CASE WHEN combined_ratio         IS NULL THEN 'MISSING' ELSE 'OK' END AS ratio_status,
-    CASE WHEN profit_loss_before_tax IS NULL THEN 'MISSING' ELSE 'OK' END AS profit_status,
-    CASE WHEN total_assets           IS NULL THEN 'MISSING' ELSE 'OK' END AS assets_status
-FROM syndicate_financials
+    CASE WHEN gwp_000s           IS NULL THEN 'MISSING' ELSE 'OK' END AS gwp_status,
+    CASE WHEN net_claims_000s    IS NULL THEN 'MISSING' ELSE 'OK' END AS claims_status,
+    CASE WHEN net_opex_000s      IS NULL THEN 'MISSING' ELSE 'OK' END AS opex_status,
+    CASE WHEN pbt_000s           IS NULL THEN 'MISSING' ELSE 'OK' END AS pbt_status,
+    CASE WHEN combined_ratio_pct IS NULL THEN 'MISSING' ELSE 'OK' END AS ratio_status,
+    CASE WHEN total_assets_000s  IS NULL THEN 'MISSING' ELSE 'OK' END AS assets_status
+FROM "SQL Master files_fixed"
 WHERE
-    gross_written_premium  IS NULL
-    OR net_claims_incurred    IS NULL
-    OR net_operating_expenses IS NULL
-    OR combined_ratio         IS NULL
-    OR profit_loss_before_tax IS NULL
-    OR total_assets           IS NULL;
+    gwp_000s           IS NULL
+    OR net_claims_000s    IS NULL
+    OR net_opex_000s      IS NULL
+    OR pbt_000s           IS NULL
+    OR combined_ratio_pct IS NULL
+    OR total_assets_000s  IS NULL;
 
 
 -- --------------------------------------------------------
 -- QUERY 4: Quick combined ratio check — present vs missing
--- One line to verify your most important field
 -- Run this immediately after adding new rows
 -- --------------------------------------------------------
 SELECT
-    SUM(CASE WHEN combined_ratio IS NOT NULL THEN 1 ELSE 0 END) AS ratio_present,
-    SUM(CASE WHEN combined_ratio IS NULL     THEN 1 ELSE 0 END) AS ratio_missing,
-    COUNT(*)                                                     AS total
-FROM syndicate_financials;
+    SUM(CASE WHEN combined_ratio_pct IS NOT NULL THEN 1 ELSE 0 END) AS ratio_present,
+    SUM(CASE WHEN combined_ratio_pct IS NULL     THEN 1 ELSE 0 END) AS ratio_missing,
+    COUNT(*)                                                         AS total
+FROM "SQL Master files_fixed";
 
 
 -- --------------------------------------------------------
 -- QUERY 5: Missing data by year of account
 -- Shows whether older or newer years have worse coverage
--- Useful once you have data across 2+ years
+-- year_of_account is INT — no quotes needed
 -- --------------------------------------------------------
 SELECT
     year_of_account,
-    COUNT(*)                                                         AS total_syndicates,
-    SUM(CASE WHEN combined_ratio         IS NULL THEN 1 ELSE 0 END)  AS missing_ratio,
-    SUM(CASE WHEN profit_loss_before_tax IS NULL THEN 1 ELSE 0 END)  AS missing_profit,
-    SUM(CASE WHEN gross_written_premium  IS NULL THEN 1 ELSE 0 END)  AS missing_gwp
-FROM syndicate_financials
+    COUNT(*)                                                        AS total_syndicates,
+    SUM(CASE WHEN combined_ratio_pct IS NULL THEN 1 ELSE 0 END)    AS missing_ratio,
+    SUM(CASE WHEN pbt_000s           IS NULL THEN 1 ELSE 0 END)    AS missing_pbt,
+    SUM(CASE WHEN gwp_000s           IS NULL THEN 1 ELSE 0 END)    AS missing_gwp
+FROM "SQL Master files_fixed"
 GROUP BY year_of_account
 ORDER BY year_of_account DESC;
 
 
 -- --------------------------------------------------------
 -- QUERY 6: Completeness rate per managing agent
--- Shows which agents have the most data gaps
--- Agents appearing at the top need priority re-extraction
+-- Agents at the top of results need priority re-extraction
 -- --------------------------------------------------------
 SELECT
     managing_agent,
@@ -114,13 +114,13 @@ SELECT
     ROUND(
         100.0 * SUM(
             CASE WHEN
-                combined_ratio         IS NOT NULL
-                AND profit_loss_before_tax IS NOT NULL
-                AND gross_written_premium  IS NOT NULL
+                combined_ratio_pct IS NOT NULL
+                AND pbt_000s       IS NOT NULL
+                AND gwp_000s       IS NOT NULL
             THEN 1 ELSE 0 END
         ) / COUNT(*),
     1) AS completeness_pct
-FROM syndicate_financials
+FROM "SQL Master files_fixed"
 GROUP BY managing_agent
 ORDER BY completeness_pct ASC;
 
