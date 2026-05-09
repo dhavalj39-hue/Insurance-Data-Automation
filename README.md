@@ -19,8 +19,6 @@ This repository documents a 30-day build of a fully automated Lloyd's syndicate 
 ---
 
 ## Repository Structure
-
-```
 Lloyds-Syndicate-Data-Portfolio/
 │
 ├── Phase-1-AI-Tools/
@@ -37,9 +35,9 @@ Lloyds-Syndicate-Data-Portfolio/
 │   └── queries/
 │       ├── create-lloyds-database.sql
 │       ├── day-07-first-queries.sql
-│       ├── day-08-where-queries.sql        ← Added today
-│       ├── day-09-completeness-check.sql   ← Added today
-│       ├── day-10-groupby-analysis.sql
+│       ├── day-08-where-queries.sql
+│       ├── day-09-completeness-check.sql
+│       ├── day-10-groupby-null-analysis.sql   ← Added today
 │       ├── day-11-join-queries.sql
 │       ├── day-12-case-when.sql
 │       └── master-lloyds-quality-check.sql
@@ -53,7 +51,6 @@ Lloyds-Syndicate-Data-Portfolio/
 ├── Phase-5-Job-Ready/
 │
 └── README.md
-```
 
 ---
 
@@ -62,7 +59,7 @@ Lloyds-Syndicate-Data-Portfolio/
 ### Phase 1 — AI First (Days 1–6) ✅
 
 | Day | File | What I Did |
-|-----|------|------------|
+| --- | --- | --- |
 | 1 | day-01-prompts.md | First extraction prompt attempt — sustainability report |
 | 2 | day-02-prompts.md | Prompt refinement — improved field targeting |
 | 3 | day-03-prompts.md | Excel validation and ChatGPT formula work |
@@ -77,11 +74,12 @@ Lloyds-Syndicate-Data-Portfolio/
 ### Phase 2 — SQL Basics (Days 7–13) 🔄 In Progress
 
 | Day | File | What I Did |
-|-----|------|------------|
+| --- | --- | --- |
 | 7 | create-lloyds-database.sql | Created `syndicate_financials` table, entered first 8 syndicates |
 | 7 | day-07-first-queries.sql | First SELECT * — confirmed all rows returned correctly |
 | 8 | day-08-where-queries.sql | SELECT + WHERE — 10 filter queries on real syndicate data |
 | 9 | day-09-completeness-check.sql | COUNT + NULL — 6 data quality queries, completeness rate tracked |
+| 10 | day-10-groupby-null-analysis.sql | GROUP BY, CASE WHEN, ROUND(), TYPEOF(), quote() — NULL mystery solved |
 
 #### Day 8 — SELECT & WHERE
 
@@ -97,7 +95,26 @@ Key learning: `WHERE combined_ratio IS NULL` — you cannot use `= NULL` in SQL.
 
 Key learning: Use `100.0` not `100` for percentage division in SQLite — integer division gives wrong result.
 
-**Week 1 completeness rate:** _____%  *(record after running Query 2 in day-09 file)*
+**Week 1 completeness rate:** _____% *(record after running Query 2 in day-09 file)*
+
+#### Day 10 — GROUP BY, CASE WHEN & NULL Investigation
+
+**Concept:** GROUP BY groups rows. CASE WHEN labels rows conditionally. TYPEOF() and quote() reveal what is actually stored.  
+**Queries written:** 6 — average combined ratio by managing agent, profitable vs loss making classification, data completeness audit, NULL detection across whole table, duplicate syndicate investigation, raw value inspection.
+
+Key learning: **Empty cells imported from Excel become the TEXT word `'NULL'` in SQLite — not real SQL NULL.**  
+This means `IS NULL` returns 0 and fails silently. Always use `quote()` to check what is actually stored, then use `= 'NULL'` to detect these fake nulls.
+
+```sql
+-- Wrong — returns 0 because values are text not real NULL
+SELECT COUNT(*) FROM "SQL Master files" WHERE nep_000s IS NULL;
+
+-- Correct — finds the fake NULLs stored as text
+SELECT COUNT(*) FROM "SQL Master files" WHERE nep_000s = 'NULL';
+
+-- Best — reveals exactly what is stored
+SELECT rowid, quote(nep_000s) FROM "SQL Master files";
+```
 
 ---
 
@@ -143,7 +160,7 @@ CREATE TABLE "SQL Master files_fixed" (
 ## Tools Used
 
 | Tool | Purpose |
-|------|---------|
+| --- | --- |
 | Claude AI | Extract financial tables from Lloyd's syndicate PDFs |
 | ChatGPT | Write and explain SQL queries, validate extracted data |
 | DB Browser for SQLite | Run SQL queries on local database |
