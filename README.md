@@ -1,178 +1,212 @@
-# Lloyd's Syndicate Data Portfolio
-
-**30-Day Build | SQL · Power BI · AI Tools (Claude & ChatGPT)**  
-Real Data: Lloyd's Syndicate Reports & Accounts
+# Lloyd's Syndicate Data Automation Portfolio
+**SQL · Power BI · AI Tools (Claude & ChatGPT)**
+**Real Data: Lloyd's Syndicate Reports & Accounts**
 
 ---
 
 ## What This Project Does
 
-This repository documents a 30-day build of a fully automated Lloyd's syndicate data pipeline:
+This project builds a fully automated Lloyd's syndicate data pipeline:
 
-1. **Claude AI** extracts structured financial data from Lloyd's syndicate PDFs in under 60 seconds
-2. **SQL** validates data quality — completeness checks, outlier detection, missing field flags
-3. **Power BI** displays a live 4-page Lloyd's performance dashboard (built in Phase 3)
-4. **Power Automate** sends alerts when thresholds are crossed (built in Phase 4)
+1. **Claude AI** extracts financial data from Lloyd's syndicate PDFs automatically
+2. **SQL** validates data quality and runs performance checks
+3. **Power BI** displays a live dashboard updating daily
+4. **Power Automate** sends alerts when thresholds are crossed
 
-> "In 30 days I built a working Lloyd's syndicate data automation system using Claude AI, ChatGPT, SQL, and Power BI. A PDF that used to take 20+ minutes of manual reading now produces a clean table in under 60 seconds."
-
----
-
-## Repository Structure
-Lloyds-Syndicate-Data-Portfolio/
-│
-├── Phase-1-AI-Tools/
-│   └── prompts/
-│       ├── day-01-prompts.md
-│       ├── day-02-prompts.md
-│       ├── day-03-prompts.md
-│       ├── day-04-lloyds-extraction.md
-│       ├── day-05-refined-prompts.md
-│       ├── day-06-prompt-library.md
-│       └── Lloyds-Prompt-Library.md
-│
-├── Phase-2-SQL/
-│   └── queries/
-│       ├── create-lloyds-database.sql
-│       ├── day-07-first-queries.sql
-│       ├── day-08-where-queries.sql
-│       ├── day-09-completeness-check.sql
-│       ├── day-10-groupby-null-analysis.sql   ← Added today
-│       ├── day-11-join-queries.sql
-│       ├── day-12-case-when.sql
-│       └── master-lloyds-quality-check.sql
-│
-├── Phase-3-PowerBI/
-│   └── screenshots/
-│
-├── Phase-4-Automation/
-│   └── pipeline/
-│
-├── Phase-5-Job-Ready/
-│
-└── README.md
-
----
-
-## Progress Log
-
-### Phase 1 — AI First (Days 1–6) ✅
-
-| Day | File | What I Did |
-| --- | --- | --- |
-| 1 | day-01-prompts.md | First extraction prompt attempt — sustainability report |
-| 2 | day-02-prompts.md | Prompt refinement — improved field targeting |
-| 3 | day-03-prompts.md | Excel validation and ChatGPT formula work |
-| 4 | day-04-lloyds-extraction.md | First Lloyd's PDF extraction — two syndicates compared |
-| 5 | day-05-refined-prompts.md | Refined prompt with risk and business class extraction |
-| 6 | day-06-prompt-library.md | Lloyd's Prompt Library — 5 best prompts documented |
-
-**Phase 1 Result:** Can extract a full 12-field Lloyd's syndicate financial table from any PDF in under 60 seconds.
-
----
-
-### Phase 2 — SQL Basics (Days 7–13) 🔄 In Progress
-
-| Day | File | What I Did |
-| --- | --- | --- |
-| 7 | create-lloyds-database.sql | Created `syndicate_financials` table, entered first 8 syndicates |
-| 7 | day-07-first-queries.sql | First SELECT * — confirmed all rows returned correctly |
-| 8 | day-08-where-queries.sql | SELECT + WHERE — 10 filter queries on real syndicate data |
-| 9 | day-09-completeness-check.sql | COUNT + NULL — 6 data quality queries, completeness rate tracked |
-| 10 | day-10-groupby-null-analysis.sql | GROUP BY, CASE WHEN, ROUND(), TYPEOF(), quote() — NULL mystery solved |
-
-#### Day 8 — SELECT & WHERE
-
-**Concept:** SELECT chooses columns. WHERE filters rows.  
-**Queries written:** 10 — unprofitable syndicates, profitable syndicates, missing data, strong performers, high GWP, filter by agent, filter by year, AND conditions, full row inspection.
-
-Key learning: `WHERE combined_ratio IS NULL` — you cannot use `= NULL` in SQL. Must be `IS NULL`.
-
-#### Day 9 — COUNT & NULL
-
-**Concept:** COUNT(*) counts all rows. SUM(CASE WHEN ... END) counts rows matching a condition.  
-**Queries written:** 6 — full completeness summary, completeness rate %, row-by-row MISSING/OK status, quick ratio check, missing data by year, completeness by managing agent.
-
-Key learning: Use `100.0` not `100` for percentage division in SQLite — integer division gives wrong result.
-
-**Week 1 completeness rate:** _____% *(record after running Query 2 in day-09 file)*
-
-#### Day 10 — GROUP BY, CASE WHEN & NULL Investigation
-
-**Concept:** GROUP BY groups rows. CASE WHEN labels rows conditionally. TYPEOF() and quote() reveal what is actually stored.  
-**Queries written:** 6 — average combined ratio by managing agent, profitable vs loss making classification, data completeness audit, NULL detection across whole table, duplicate syndicate investigation, raw value inspection.
-
-Key learning: **Empty cells imported from Excel become the TEXT word `'NULL'` in SQLite — not real SQL NULL.**  
-This means `IS NULL` returns 0 and fails silently. Always use `quote()` to check what is actually stored, then use `= 'NULL'` to detect these fake nulls.
-
-```sql
--- Wrong — returns 0 because values are text not real NULL
-SELECT COUNT(*) FROM "SQL Master files" WHERE nep_000s IS NULL;
-
--- Correct — finds the fake NULLs stored as text
-SELECT COUNT(*) FROM "SQL Master files" WHERE nep_000s = 'NULL';
-
--- Best — reveals exactly what is stored
-SELECT rowid, quote(nep_000s) FROM "SQL Master files";
-```
-
----
-
-### Phase 3 — Power BI (Days 14–19) ⏳ Coming Soon
-
-### Phase 4 — Automation (Days 20–26) ⏳ Coming Soon
-
-### Phase 5 — Job Ready (Days 27–30) ⏳ Coming Soon
-
----
-
-## Data Schema
-
-All syndicate data is stored in `lloyds_syndicate_data.db` (SQLite).  
-Table name: `SQL Master files_fixed`
-
-```sql
-CREATE TABLE "SQL Master files_fixed" (
-    syndicate_number     INT,     -- Unique syndicate identifier
-    syndicate_name       TEXT,    -- Full name of the syndicate
-    managing_agent       TEXT,    -- Agent responsible for running the syndicate
-    year_of_account      INT,     -- Underwriting year
-    report_type          TEXT,    -- Type of Lloyd's report
-    gwp_000s             REAL,    -- Gross Written Premium (£000s)
-    nwp_000s             REAL,    -- Net Written Premium (£000s)
-    net_claims_000s      REAL,    -- Net Claims Incurred (£000s)
-    net_opex_000s        REAL,    -- Net Operating Expenses (£000s)
-    pbt_000s             REAL,    -- Profit / Loss Before Tax (£000s)
-    combined_ratio_pct   REAL,    -- Combined Ratio % — under 100 = profitable
-    total_assets_000s    REAL,    -- Total Assets (£000s)
-    members_funds_000s   REAL,    -- Members Funds / Capital (£000s)
-    currency_unit        TEXT,    -- Currency unit as stated in source PDF
-    source_doc           TEXT,    -- Source PDF filename or reference
-    notes                TEXT     -- Any extraction notes or flags
-);
-```
-
-**Column naming convention:** `_000s` suffix = figures in £thousands. `_pct` suffix = percentage value.  
-**Key rule:** `combined_ratio_pct` under 100 = profitable underwriting. Above 100 = loss.
+> A PDF that used to take 20+ minutes of manual reading now produces a clean structured table in under 60 seconds.
 
 ---
 
 ## Tools Used
 
 | Tool | Purpose |
-| --- | --- |
-| Claude AI | Extract financial tables from Lloyd's syndicate PDFs |
-| ChatGPT | Write and explain SQL queries, validate extracted data |
-| DB Browser for SQLite | Run SQL queries on local database |
-| Power BI Desktop | Build live Lloyd's performance dashboard (Phase 3) |
-| Power Automate | Automated email alerts on data thresholds (Phase 4) |
-| GitHub | Daily portfolio — 30 consecutive days of commits |
+|---|---|
+| Claude AI | Extract syndicate financials from PDFs |
+| ChatGPT | Write and explain SQL queries |
+| DB Browser for SQLite | Run and test SQL queries |
+| Power BI | Live performance dashboard |
+| Power Automate | Automated alerts pipeline |
+| GitHub | Daily progress documentation |
 
 ---
 
-## Data Source
+## Real Data — Lloyd's Syndicate Reports
 
-Lloyd's of London publishes annual syndicate reports publicly at:  
-[lloyds.com — Syndicate Reports and Accounts](https://www.lloyds.com/about-lloyds/investor-relations/syndicate-reports-and-accounts)
+All data is extracted from real, publicly available Lloyd's syndicate annual reports from lloyds.com
 
-These are real financial documents used by investors and regulators worldwide.
+| Field | SQL Column | Why It Matters |
+|---|---|---|
+| Syndicate Number | syndicate_number | Unique identifier |
+| Managing Agent | managing_agent | Who runs the syndicate |
+| Year of Account | year_of_account | Which underwriting year |
+| Gross Written Premium | gwp_000s | Total premiums before reinsurance |
+| Net Written Premium | nwp_000s | Premiums after reinsurance |
+| Net Claims Incurred | net_claims_000s | Claims net of reinsurance |
+| Net Operating Expenses | net_opex_000s | Running costs |
+| Profit / Loss Before Tax | pbt_000s | Bottom line performance |
+| Combined Ratio | combined_ratio_pct | Under 100 = profitable |
+| Total Assets | total_assets_000s | Total syndicate assets |
+| Members Funds | members_funds_000s | Capital backing |
+
+---
+
+## 30-Day Plan Progress
+
+### ✅ Phase 1 — AI First (Days 1–6)
+Extract Lloyd's syndicate data from PDFs automatically using Claude and ChatGPT.
+
+| Day | What I Did | File |
+|---|---|---|
+| 1–3 | First extraction attempts — prompt building and refinement | `Phase-1-AI-Tools/prompts/` |
+| 4 | First Lloyd's PDF extraction using master prompt | `day-04-lloyds-extraction.md` |
+| 5 | Refined prompt — added risk and business class extraction | `day-05-refined-prompts.md` |
+| 6 | Speed test — full extraction in under 60 seconds | `Lloyds-Prompt-Library.md` |
+
+**Phase 1 Result:** Can extract all 12 financial fields from any Lloyd's syndicate PDF in under 60 seconds.
+
+---
+
+### ✅ Phase 2 — SQL Basics (Days 7–13)
+Query Lloyd's syndicate data with SQL in DB Browser for SQLite.
+
+| Day | What I Did | File |
+|---|---|---|
+| 7 | Created `syndicate_financials` database and first SELECT queries | `day-07-first-queries.sql` |
+| 8 | SELECT and WHERE — filter syndicates by combined ratio and profit | `day-08-where-queries.sql` |
+| 9 | COUNT and NULL — data completeness check on all key fields | `day-09-completeness-check.sql` |
+| 10 | GROUP BY — average combined ratio by managing agent | `day-10-groupby-analysis.sql` |
+| **11** | **JOIN — created syndicate_details table, combined financial + business data** | **`day-11-join-queries.sql`** |
+| 12 | CASE WHEN — automatic performance labels | Coming tomorrow |
+| 13 | Revision — master quality check query | Coming soon |
+
+**Phase 2 Result (so far):** Can query Lloyd's data to find profitable syndicates, flag missing data, compare managing agents, and join business context to financial numbers.
+
+---
+
+### 🔲 Phase 3 — Power BI (Days 14–19)
+Build a live Lloyd's performance dashboard.
+
+| Day | Focus |
+|---|---|
+| 14 | Connect Power BI to SQLite database |
+| 15 | KPI cards and DAX measures |
+| 16 | Drill-through by managing agent |
+| 17 | Slicers and data quality page |
+| 18 | Executive summary page |
+| 19 | Full rebuild revision |
+
+---
+
+### 🔲 Phase 4 — Automation (Days 20–26)
+Connect everything into one automatic pipeline.
+
+| Day | Focus |
+|---|---|
+| 20 | SQL views — save quality checks |
+| 21 | Power BI scheduled refresh |
+| 22 | Power BI alerts |
+| 23 | Power Automate email alerts |
+| 24 | Error log and quality trend |
+| 25 | Exception queue |
+| 26 | Full pipeline test |
+
+---
+
+### 🔲 Phase 5 — Job Ready (Days 27–30)
+Present the Lloyd's system to a VP.
+
+---
+
+## Day 11 Highlight — JOIN
+
+The biggest milestone so far. Before Day 11 my database had financial numbers but no business context. After Day 11 I can answer:
+
+- Which class of business has the best combined ratio?
+- Which syndicates are still active?
+- Where is each syndicate based?
+
+```sql
+-- Day 11 core query
+SELECT
+    f.syndicate_number,
+    f.syndicate_name,
+    d.main_class_of_business,
+    d.domicile,
+    d.active_status,
+    f.gwp_000s,
+    f.combined_ratio_pct,
+    f.pbt_000s
+FROM "SQL Master files" f
+JOIN syndicate_details d
+    ON f.syndicate_number = d.syndicate_number;
+```
+
+---
+
+## My Database — Current Status
+
+| Table | Rows | What It Contains |
+|---|---|---|
+| `SQL Master files` | 7 | Financial data — GWP, CR, profit, claims |
+| `SQL Master files_fixed` | 7 | Same data with REAL number types |
+| `syndicate_details` | 6 | Business class, domicile, active status |
+
+### Syndicates in Database
+
+| Syndicate | Name | Year | CR | Status |
+|---|---|---|---|---|
+| 623 | Beazley | 2023 | 84 | Active |
+| 1225 | AEGIS London | 2014 | 84 | Active |
+| 2488 | ACE Underwriting | 2014 | 62 | Active |
+| 6110 | Pembroke | 2015 | 68 | Inactive |
+| 6110 | Pembroke | 2013 | NULL | Inactive |
+| 1274 | Antares | 2014 | 92 | Active |
+| 1856 | Arcus/Barbican | 2019 | 106 | Inactive |
+
+---
+
+## Repository Structure
+
+```
+Lloyds-Syndicate-Data-Portfolio/
+│
+├── Phase-1-AI-Tools/
+│   └── prompts/
+│       ├── day-04-lloyds-extraction.md
+│       ├── day-05-refined-prompts.md
+│       └── Lloyds-Prompt-Library.md
+│
+├── Phase-2-SQL/
+│   └── queries/
+│       ├── day-07-first-queries.sql
+│       ├── day-08-where-queries.sql
+│       ├── day-09-completeness-check.sql
+│       ├── day-10-groupby-analysis.sql
+│       ├── day-11-join-queries.sql
+│       └── day-11-progress.md
+│
+├── Phase-3-PowerBI/
+│   └── screenshots/        ← coming Days 14–19
+│
+├── Phase-4-Automation/
+│   └── pipeline/           ← coming Days 20–26
+│
+├── Phase-5-Job-Ready/      ← coming Days 27–30
+│
+└── README.md
+```
+
+---
+
+## What I Can Do Right Now
+
+| Skill | Tool | What I Built |
+|---|---|---|
+| Extract syndicate financials from any Lloyd's PDF | Claude AI | Under 60 seconds per PDF |
+| Query and filter syndicate data | SQL | WHERE, GROUP BY, JOIN, COUNT |
+| Validate data quality automatically | SQL | NULL checks, completeness rate |
+| Combine financial + business data | SQL JOIN | Two-table query with context |
+
+---
+
+*Building in public — 30 days of real Lloyd's data, real tools, real automation.*
