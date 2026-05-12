@@ -32,7 +32,7 @@ This project builds a fully automated Lloyd's syndicate data pipeline:
 
 ## Real Data — Lloyd's Syndicate Reports
 
-All data is extracted from real, publicly available Lloyd's syndicate annual reports from lloyds.com
+All data extracted from real publicly available Lloyd's syndicate annual reports from lloyds.com
 
 | Field | SQL Column | Why It Matters |
 |---|---|---|
@@ -71,15 +71,15 @@ Query Lloyd's syndicate data with SQL in DB Browser for SQLite.
 
 | Day | What I Did | File |
 |---|---|---|
-| 7 | Created `syndicate_financials` database and first SELECT queries | `day-07-first-queries.sql` |
+| 7 | Created syndicate_financials database and first SELECT queries | `day-07-first-queries.sql` |
 | 8 | SELECT and WHERE — filter syndicates by combined ratio and profit | `day-08-where-queries.sql` |
 | 9 | COUNT and NULL — data completeness check on all key fields | `day-09-completeness-check.sql` |
 | 10 | GROUP BY — average combined ratio by managing agent | `day-10-groupby-analysis.sql` |
-| **11** | **JOIN — created syndicate_details table, combined financial + business data** | **`day-11-join-queries.sql`** |
-| 12 | CASE WHEN — automatic performance labels | Coming tomorrow |
-| 13 | Revision — master quality check query | Coming soon |
+| 11 | JOIN — created syndicate_details table, combined financial + business data | `day-11-join-queries.sql` |
+| **12** | **CASE WHEN — automatic performance labels for every syndicate** | **`day-12-case-when.sql`** |
+| 13 | Revision — master quality check query | Coming tomorrow |
 
-**Phase 2 Result (so far):** Can query Lloyd's data to find profitable syndicates, flag missing data, compare managing agents, and join business context to financial numbers.
+**Phase 2 Result (so far):** Can query Lloyd's data to find profitable syndicates, flag missing data, compare managing agents, join business context, and automatically label every syndicate.
 
 ---
 
@@ -117,29 +117,36 @@ Present the Lloyd's system to a VP.
 
 ---
 
-## Day 11 Highlight — JOIN
+## Day 12 Highlight — CASE WHEN Performance Labels
 
-The biggest milestone so far. Before Day 11 my database had financial numbers but no business context. After Day 11 I can answer:
-
-- Which class of business has the best combined ratio?
-- Which syndicates are still active?
-- Where is each syndicate based?
+Every syndicate now automatically classified — no manual work needed.
 
 ```sql
--- Day 11 core query
 SELECT
-    f.syndicate_number,
-    f.syndicate_name,
-    d.main_class_of_business,
-    d.domicile,
-    d.active_status,
-    f.gwp_000s,
-    f.combined_ratio_pct,
-    f.pbt_000s
-FROM "SQL Master files" f
-JOIN syndicate_details d
-    ON f.syndicate_number = d.syndicate_number;
+    syndicate_number,
+    syndicate_name,
+    combined_ratio_pct,
+    CASE
+        WHEN CAST(combined_ratio_pct AS REAL) < 95  THEN 'Strong Performer'
+        WHEN CAST(combined_ratio_pct AS REAL) < 100 THEN 'Marginal'
+        WHEN CAST(combined_ratio_pct AS REAL) < 110 THEN 'Loss Making'
+        WHEN CAST(combined_ratio_pct AS REAL) >= 110 THEN 'Significant Loss'
+        ELSE 'No Data'
+    END AS performance_label
+FROM "SQL Master files"
+ORDER BY CAST(combined_ratio_pct AS REAL) ASC;
 ```
+
+### My Syndicates Labelled
+
+| Syndicate | Name | CR | Label |
+|---|---|---|---|
+| 2488 | ACE | 62 | Strong Performer |
+| 6110 | Pembroke | 68 | Strong Performer |
+| 623 | Beazley | 84 | Strong Performer |
+| 1225 | AEGIS London | 84 | Strong Performer |
+| 1274 | Antares | 92 | Strong Performer |
+| 1856 | Arcus/Barbican | 106 | Loss Making |
 
 ---
 
@@ -150,18 +157,6 @@ JOIN syndicate_details d
 | `SQL Master files` | 7 | Financial data — GWP, CR, profit, claims |
 | `SQL Master files_fixed` | 7 | Same data with REAL number types |
 | `syndicate_details` | 6 | Business class, domicile, active status |
-
-### Syndicates in Database
-
-| Syndicate | Name | Year | CR | Status |
-|---|---|---|---|---|
-| 623 | Beazley | 2023 | 84 | Active |
-| 1225 | AEGIS London | 2014 | 84 | Active |
-| 2488 | ACE Underwriting | 2014 | 62 | Active |
-| 6110 | Pembroke | 2015 | 68 | Inactive |
-| 6110 | Pembroke | 2013 | NULL | Inactive |
-| 1274 | Antares | 2014 | 92 | Active |
-| 1856 | Arcus/Barbican | 2019 | 106 | Inactive |
 
 ---
 
@@ -183,7 +178,9 @@ Lloyds-Syndicate-Data-Portfolio/
 │       ├── day-09-completeness-check.sql
 │       ├── day-10-groupby-analysis.sql
 │       ├── day-11-join-queries.sql
-│       └── day-11-progress.md
+│       ├── day-11-progress.md
+│       ├── day-12-case-when.sql        ← NEW DAY 12
+│       └── day-12-progress.md          ← NEW DAY 12
 │
 ├── Phase-3-PowerBI/
 │   └── screenshots/        ← coming Days 14–19
@@ -206,6 +203,7 @@ Lloyds-Syndicate-Data-Portfolio/
 | Query and filter syndicate data | SQL | WHERE, GROUP BY, JOIN, COUNT |
 | Validate data quality automatically | SQL | NULL checks, completeness rate |
 | Combine financial + business data | SQL JOIN | Two-table query with context |
+| Auto-label every syndicate | SQL CASE WHEN | Strong / Marginal / Loss / Significant Loss |
 
 ---
 
