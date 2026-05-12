@@ -350,7 +350,7 @@ ChatGPT pulled classification terms from multiple sections without recognising t
 - [x] 2 confidence calibration errors confirmed (Net Written Premium, Members' Funds)
 - [x] 1 taxonomy conflation error confirmed (Classes of Business — mixed frameworks)
 - [x] Root cause analysis documented (3 distinct failure modes)
-- [x] Final scorecard produced → [`../validation_scorecard.md`](../validation_scorecard.md)
+- [x] Final scorecard produced
 - [x] Study conclusions written
 
 ---
