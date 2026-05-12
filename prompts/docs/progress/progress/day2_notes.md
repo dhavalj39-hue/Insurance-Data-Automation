@@ -1,11 +1,11 @@
 # Day 2 — Running the Extractions
 
-> **Goal:** Submit the same prompt to both ChatGPT (GPT-4o) and Claude (Sonnet 4.5), collect raw outputs, and note first impressions before formal scoring.
+> **Goal:** Submit the same prompt to both ChatGPT (GPT-4o) and Claude (Sonnet 4.6), collect raw outputs, and note first impressions before formal scoring.
 
 ---
 
 ## 🗓️ Date
-Day 2 of 3 — HSE LLM Comparison Study
+Day 2 of 3 — Lloyd's Syndicate LLM Comparison Study
 
 ---
 
@@ -21,11 +21,11 @@ Day 2 of 3 — HSE LLM Comparison Study
 ## ⚙️ Setup
 
 ### Both Models Received
-- **Same prompt** — the full 10-section HSE extraction schema from Day 1
-- **Same source document** — ExxonMobil 2025 Sustainability Report (PDF, 71 pages)
-- **Same instruction framing** — "You are a senior HSE data analyst..."
+- **Same prompt** — the full 11-field structured extraction schema + Part 2 qualitative analysis from Day 1
+- **Same source document** — AEGIS London Syndicate 1225 Annual Report, Year Ended 31 December 2014 (PDF, 29 pages)
+- **Same instruction framing** — "You are a senior financial and insurance data analyst specializing in Lloyd's syndicate reporting..."
 
-### Key variable
+### Key Variable
 The only difference is the model — same input, same task, different AI.
 
 ---
@@ -33,124 +33,119 @@ The only difference is the model — same input, same task, different AI.
 ## 🤖 ChatGPT Run — Observations
 
 ### What it produced
-- **Output length:** ~3 pages equivalent
+- **Output length:** ~2 pages equivalent
 - **Time to complete:** Fast — response came quickly
 - **Format adherence:** Mostly followed the table structure
 
 ### Immediate observations (before scoring)
 
 **What looked right:**
-- Section headers were present for all 10 sections ✓
-- NULL was written in most empty fields ✓
-- LTIR values for 2024 and 2023 appeared (0.02) ✓
-- Lloyd's Register named as assurance provider ✓
-- Water recycling 98% for Permian Basin ✓
-- Advanced recycling 1B lbs capacity target ✓
+- All 11 fields present in the table ✓
+- Syndicate Number, Managing Agent, Year of Account all correct ✓
+- GWP £371.0m correctly extracted ✓
+- Net Written Premium £307.0m correct ✓
+- Net Operating Expenses (£108.0m) correct ✓
+- Profit £60.5m correct ✓
+- Combined Ratio 83.5% correct ✓
+- Total Assets £808.6m correct ✓
+- Members' Funds £105.6m correct ✓
 
 **What looked suspicious:**
-- SOx, NOx, and VOC all showing "25%" — something felt off here
-- Section 4 was very thin — only about 9 rows total for the entire Environmental section
-- Section 9 Workforce was entirely NULL across all fields
-- Only 3 standards listed (IOGP, GRI, ISO 14001) when the prompt asked for all applicable ones
-- Environmental fines all showing NULL
-- Section 8 had only 3 programs listed vs. what I expected (~25+)
+- Net Claims Incurred showing **(£131.4m)** — this felt off, the number looked familiar but wrong for 2014
+- Managing Agent page reference cited as page 29 (Notes/Admin) rather than a primary statement
+- Members' Funds page reference cited as page 23 (Notes) rather than page 10 (Balance Sheet)
+- Net Written Premium confidence marked as **Medium** — this is directly stated in the P&L, should be High
+- Part 2 Classes of Business mixed two different classification frameworks (portfolio split + segmental)
+- Performance summary contained no specific figures or year references
 
 **First impression:**
-The output *looks* structured and professional at a glance. The table formatting is clean. But it's shallow — headline numbers only, and the suspicious "25%" values for emissions needed checking.
+The output looks clean and professional at a glance. Formatting is good. But the Net Claims figure triggered immediate concern — needed to go back to the source P&L to verify.
 
 ---
 
 ## 🤖 Claude Run — Observations
 
 ### What it produced
-- **Output length:** ~14 pages equivalent (significantly longer)
-- **Time to complete:** Slower — much more thorough
-- **Format adherence:** Followed schema very precisely
+- **Output length:** ~3 pages equivalent
+- **Time to complete:** Slightly slower — more thorough
+- **Format adherence:** Followed schema precisely
 
 ### Immediate observations (before scoring)
 
 **What looked right:**
-- All 10 sections fully populated
-- Full 5-year time series (2020–2024) for every KPI
-- Fatalities broken out by employees vs. contractors for each year
-- TRIR with employee/contractor/total split across 5 years
-- FAR with correct denominator (per 1,000,000 work hours vs. LTIR per 200,000)
-- All 20 regulatory standards with individual compliance status
-- All environmental fines correctly extracted ($1M, $2M, <$1M by year)
-- 27 programs in Section 8 with investment amounts and outcomes
-- Full workforce diversity and training data (5-year series)
-- 48 data quality flags across all sections
+- All 11 fields correctly populated ✓
+- Net Claims Incurred correctly stated as **(£138.4m)** — matching P&L page 7 ✓
+- All page references pointing to primary financial statements ✓
+- GWP page reference correctly cited as page 7 (P&L), not page 5 (Strategic Report) ✓
+- Members' Funds correctly sourced from Balance Sheet page 10 ✓
+- All confidence ratings correctly calibrated as High ✓
+- Part 2 Classes of Business drawn consistently from a single source (Segmental Analysis, page 16) ✓
+- Performance summary cited specific figure (£60.5m), ninth successive year, and combined ratio ✓
+- Risk factors included quantitative context (£3.3m claims reserve sensitivity) ✓
 
 **Things I noted to verify:**
-- Several `<0.1` waste values — needed to confirm these were in the source
-- NOx methodology change flag — needed to verify footnote 3 on p.69
-- Denbury/Pioneer portfolio scope notes — needed to cross-check
+- Wanted to confirm Net Claims (£138.4m) directly on page 7 of PDF — confirmed ✓
+- Verified that (£131.4m) in ChatGPT output matches 2013 comparative column — confirmed ✓
 
 **First impression:**
-This is what I'd expect from a senior analyst who read the entire document carefully. The length was initially surprising but every section had genuine data behind it.
+Every number traces cleanly back to the correct page and the correct year. The qualitative section reads like someone who absorbed the whole report, not just the highlights page.
 
 ---
 
 ## 🔍 Side-by-Side First Look
 
 | Observation | ChatGPT | Claude |
-|-------------|---------|--------|
-| Output length | ~3 pages | ~14 pages |
-| Sections completed | 10/10 (but mostly NULL) | 10/10 (fully populated) |
-| LTIR values extracted | 2/15 rows | 15/15 rows |
-| TRIR extracted | 0 rows | 15 rows |
-| Fatality data | 0 rows | 10 rows |
-| Environmental KPIs (S4) | ~9 rows | ~55 rows |
-| 5-year time series | Rarely | Always |
-| Unit conversions | None | Shown for all non-SI values |
-| Data quality flags | 8 flags | 48 flags |
-| Page citations | Rarely | Every row |
-| Standards listed | 3 | 9 |
-| Programs listed (S8) | 3 | 27 |
+|---|---|---|
+| Output length | ~2 pages | ~3 pages |
+| Fields correctly extracted | 10 / 11 | 11 / 11 |
+| Page references (primary statements) | 8 / 11 | 11 / 11 |
+| Confidence ratings accurate | 9 / 11 | 11 / 11 |
+| Correct reporting year data | ❌ (1 field wrong year) | ✅ All 2014 |
+| Source hierarchy compliance | ⚠️ Partial | ✅ Full |
+| Classes of Business consistency | ❌ Mixed taxonomy | ✅ Single source |
+| Performance summary with figures | ❌ No figures cited | ✅ Figures cited |
+| Risk factors with context | ❌ Labels only | ✅ With detail + sensitivity |
 
 ---
 
 ## ⚠️ Red Flags Identified Before Formal Scoring
 
-### Red Flag 1 — ChatGPT SOx/NOx/VOC Values
-The values "25%" for SOx, NOx, and VOC triggered immediate concern. These are emission quantities — they should be in million metric tons. Checked source p.67:
+### Red Flag 1 — ChatGPT Net Claims Incurred: Wrong Year
+The value **(£131.4m)** for Net Claims Incurred triggered immediate concern. These are financial statements — the number should reflect 2014, not 2013. Checked source P&L page 7:
 
 ```
-SOx: 0.05 million metric tons (2024)
-NOx: 0.11 million metric tons (2024)  
-VOC: 0.13 million metric tons (2024)
+Net Claims Incurred — 2014:  (£138.4m)   ← correct value
+Net Claims Incurred — 2013:  (£131.2m)   ← prior year comparative
 ```
 
-The "25%" is from a completely different sentence on pp. 4 and 29:
-> "From 2016 to 2024, total reportable emissions of VOCs, SOx, and NOx decreased by about 25%"
+ChatGPT extracted **(£131.4m)** — close to but not even exactly matching the 2013 comparative of (£131.2m), suggesting possible rounding or misread. Regardless, **the wrong column was read entirely.** This is a fundamental year-identification error.
 
-The model extracted the reduction percentage and applied it as the emission value. **This is a fundamental data identification error.**
+> In an audit or regulatory filing context, a prior-year figure submitted as current-year data would constitute a material misstatement.
 
-### Red Flag 2 — ChatGPT Water Target
-Section 7 showed the Permian Basin water target as "500,000,000 pounds" — this is the advanced recycling capacity target, not the water recycling target. Two completely different metrics had been conflated.
+### Red Flag 2 — ChatGPT Page References: Secondary Sources Preferred
+ChatGPT cited:
+- GWP from **page 5** (Strategic Report) instead of **page 7** (P&L Statement)
+- Members' Funds from **page 23** (Notes — reconciliation table) instead of **page 10** (Balance Sheet)
 
-### Red Flag 3 — ChatGPT Fines All NULL
-Environmental fines clearly visible on p.67 of the source document:
+The prompt explicitly states: *"Prefer values from primary financial statements over notes."*
+Both deviations indicate the model extracted from the first place it encountered the figure, rather than tracing to the primary statement.
 
-```
-2024: 0.001 ($1M)
-2023: <0.001 (<$1M)
-2022: 0.002 ($2M)
-2021: <0.001 (<$1M)
-2020: <0.001 (<$1M)
-```
+### Red Flag 3 — ChatGPT Classes of Business: Mixed Taxonomy
+Part 2 listed both:
+- **"Casualty" and "Property"** — these are portfolio mix categories from the Strategic Report (page 5), expressed as percentages (32% / 68%)
+- **"Marine, aviation and transport", "Fire and other damage to property", "Third party liability"** — these are segmental classes from the Notes (page 16)
 
-All showing NULL in the ChatGPT output.
+These are two entirely different classification frameworks from two different sections of the report. Mixing them in a single list creates a taxonomy error that would mislead any downstream analysis.
 
 ---
 
 ## 💭 Day 2 Hypothesis Update
 
-The pattern is becoming clear: **ChatGPT appears to have read the Executive Summary (pp. 1–8) primarily**, while Claude reached the structured Performance Data Table (pp. 67–69).
+The pattern is clear: **ChatGPT appears to have read across multiple sections without anchoring to the correct year column**, while Claude consistently traced each value to the primary statement and the 2014 column specifically.
 
-This is a critical difference. The executive summary uses rounded, narrative figures and trend statements. The data table contains the precise 5-year time series that the prompt was asking for.
+The Net Claims error is the strongest evidence — the 2013 comparative sits immediately adjacent to the 2014 figure in the P&L table. A careful reading of a two-column financial statement requires explicit year-column discipline. Claude applied this; ChatGPT did not.
 
-The 25% error is the clearest evidence of this — that figure only appears in the narrative sections as a qualitative trend description, not in the data table.
+The taxonomy error in Part 2 reinforces this: ChatGPT pulled terms from whichever section mentioned insurance classes first, rather than identifying the most authoritative classification source (the segmental analysis note).
 
 ---
 
@@ -160,7 +155,7 @@ The 25% error is the clearest evidence of this — that figure only appears in t
 - [x] Claude extraction collected and saved → [`../extractions/claude-output.md`](../extractions/claude-output.md)
 - [x] 3 critical red flags identified in ChatGPT output
 - [x] Side-by-side first impression documented
-- [x] Root cause hypothesis formed (Executive Summary vs. Data Table reading)
+- [x] Root cause hypothesis formed (year-column discipline + source hierarchy compliance)
 
 ---
 
