@@ -2,7 +2,7 @@
 
 ## What I Did
 
-* Extracted environmental metrics using AI prompt
+* Extracted Llyod Syndicate Data using AI prompt
 * Converted data into structured table
 
 ## Issues Found
