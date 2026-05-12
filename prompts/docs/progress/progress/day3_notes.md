@@ -5,16 +5,16 @@
 ---
 
 ## 🗓️ Date
-Day 3 of 3 — HSE LLM Comparison Study
+Day 3 of 3 — Lloyd's Syndicate LLM Comparison Study
 
 ---
 
 ## 🎯 Objective for Today
 
-- Cross-check all extracted values against source document (pp. 67–69 primary; full document secondary)
+- Cross-check all extracted values against source document (P&L Account, Balance Sheet primary; Strategic Report and Notes secondary)
 - Score each data point: CORRECT / WRONG / PARTIAL / MISSING
-- Calculate section-by-section and overall scores
-- Produce validation PDF report
+- Calculate field-by-field and overall scores
+- Produce validation scorecard
 - Draw final conclusions
 
 ---
@@ -22,230 +22,337 @@ Day 3 of 3 — HSE LLM Comparison Study
 ## 🔬 Validation Methodology
 
 ### Ground Truth Source
-Primary: **Performance Data Table (pp. 67–69)** — the authoritative numeric data source in the report.
-Secondary: **Narrative sections (pp. 1–66)** — for qualitative KPIs, programs, targets.
+Primary: **Profit & Loss Account (pages 7–8) and Balance Sheet (pages 9–10)** — the authoritative numeric data sources in the report.
+Secondary: **Strategic Report (pages 3–4) and Notes to the Accounts (pages 10–23)** — for qualitative KPIs, narrative context, and supporting data.
 
 ### Scoring Criteria
 
 | Verdict | Definition |
-|---------|-----------|
-| ✅ CORRECT | Value, unit, year, and scope exactly match source |
+|---|---|
+| ✅ CORRECT | Value, unit, year, and source exactly match primary statement |
 | ❌ WRONG | Extracted value contradicts source (factual error) |
-| 🟡 PARTIAL | Some but not all years / sub-categories extracted |
-| ⬜ MISSING | KPI present in source but not extracted at all |
-| ➖ N/A | KPI genuinely not present in source (correct NULL) |
+| 🟡 PARTIAL | Value correct but page reference or confidence rating inaccurate |
+| ⬜ MISSING | Field present in source but not extracted |
+| ➖ N/A | Field genuinely not present in source (correct NULL) |
 
-### Total checkpoints: **225 data points** across 10 sections
-
----
-
-## 📊 Validation Results by Section
-
-### Section 1 — Report Metadata (12 points)
-
-| Field | ChatGPT | Claude |
-|-------|---------|--------|
-| Report title | ✅ | ✅ |
-| Company name | 🟡 (abbreviated) | ✅ |
-| Period start | ✅ (ISO format) | ✅ |
-| Period end | ✅ (ISO format) | ✅ |
-| Publication date | 🟡 (month only, day missing) | ✅ |
-| Report version | ✅ (NULL correct) | ✅ |
-| Applicable standards | 🟡 (3 of 9 listed) | ✅ (all 9) |
-| Third-party assurance | ✅ | ✅ |
-| Assurance level | 🟡 (scope qualifier missing) | ✅ |
-| Acquisition data coverage | ⬜ | ✅ |
-| Data as-of dates | ⬜ | ✅ |
-| GHG/energy caveat | ⬜ | ✅ |
-
-**Score — ChatGPT: 4/12 | Claude: 12/12**
+### Total checkpoints: **44 data points** across Part 1 (11 fields × 4 attributes) + Part 2 (3 qualitative sections)
 
 ---
 
-### Section 2 — Safety KPIs (42 points)
+## 📊 Validation Results — Part 1: Structured Financial Data
 
-Key findings:
-- ChatGPT extracted LTIR for 2024 and 2023 only — missed 2022, 2021, 2020 entirely
-- ChatGPT extracted zero TRIR values despite all 15 rows being in the data table
-- ChatGPT extracted zero FAR values
-- ChatGPT extracted zero fatality counts (employees or contractors)
-- ChatGPT extracted zero Process Safety Tier 1 counts
+### Field 1 — Syndicate Number (4 points)
 
-All data is clearly in the performance table on p.68 — this is not an ambiguous or hidden data point.
+| Attribute | ChatGPT | Claude |
+|---|---|---|
+| Value | ✅ 1225 | ✅ 1225 |
+| Currency Unit | ✅ NULL correct | ✅ NULL correct |
+| Page Reference | ✅ Page 2 | ✅ Page 2 |
+| Confidence | ✅ High | ✅ High |
 
-**Score — ChatGPT: 8/42 | Claude: 42/42**
-
-Notable: Claude correctly identified the denominator difference — LTIR/TRIR are per 200,000 work hours while FAR is per 1,000,000 work hours. ChatGPT did not note this distinction.
+**Score — ChatGPT: 4/4 | Claude: 4/4**
 
 ---
 
-### Section 3 — Health KPIs (9 points)
+### Field 2 — Managing Agent Name (4 points)
 
-Both models correctly noted NULL for most health metrics (genuinely not in the source). Claude additionally extracted two qualitative items (biometric screening mention, well-being champions mention) that were in the report but not numerically quantified.
+| Attribute | ChatGPT | Claude |
+|---|---|---|
+| Value | ✅ Correct | ✅ Correct |
+| Currency Unit | ✅ NULL correct | ✅ NULL correct |
+| Page Reference | 🟡 Page 29 (Admin/Notes — secondary) | ✅ Page 27 (Administration section) |
+| Confidence | ✅ High | ✅ High |
 
-**Score — ChatGPT: 6/9 | Claude: 9/9**
+**Score — ChatGPT: 3/4 | Claude: 4/4**
 
----
-
-### Section 4 — Environmental KPIs (45 points)
-
-This was the section with the most dramatic gap.
-
-**The critical error confirmed:**
-Checked p.67 of source against ChatGPT's "SOx = 25%, NOx = 25%, VOC = 25%":
-
-```
-Source p.67 (actual values):
-SOx emitted 2024: 0.05 million metric tons
-NOx emitted 2024: 0.11 million metric tons  
-VOC emitted 2024: 0.13 million metric tons
-
-Source p.29 (narrative trend):
-"From 2016 to 2024, total reportable emissions of VOCs, SOx, 
-and NOx decreased by about 25%"
-```
-
-The 25% figure is a trend narrative. The model extracted it as if it were the emission quantity. This is the clearest evidence that the model was reading narrative text and did not access the structured data table.
-
-Additional ChatGPT misses: all 10 freshwater rows, all 6 discharge rows, all 20+ spill rows, all 30+ waste rows, all 5 expenditure rows.
-
-**Score — ChatGPT: 7/45 | Claude: 45/45**
+> ⚠️ ChatGPT cited page 29 — this is within the Notes section. Page 27 is the dedicated Administration page where the Managing Agent is formally listed. Minor but relevant in an audit context.
 
 ---
 
-### Section 5 — Incidents & Events (7 points)
+### Field 3 — Year of Account (4 points)
 
-ChatGPT returned entirely NULL for this section. Claude extracted all 6 recorded events/drills with full details (date, location, participants, outcome, status).
+| Attribute | ChatGPT | Claude |
+|---|---|---|
+| Value | ✅ 2014 | ✅ 2014 |
+| Currency Unit | ✅ NULL correct | ✅ NULL correct |
+| Page Reference | ✅ Page 2 | ✅ Page 2 |
+| Confidence | ✅ High | ✅ High |
 
-**Score — ChatGPT: 1/7 | Claude: 7/7**
-
----
-
-### Section 6 — Regulatory & Compliance (14 points)
-
-Second major factual error confirmed here — environmental fines.
-
-```
-Source p.67:
-Environmental penalties, fines and settlements:
-2024: 0.001 billion USD
-2023: <0.001 billion USD
-2022: 0.002 billion USD
-2021: <0.001 billion USD
-2020: <0.001 billion USD
-```
-
-ChatGPT showed NULL for all years. The data is explicitly in the performance table.
-
-Also: ChatGPT listed only 4 regulatory standards vs. 20 that are mentioned throughout the report.
-
-**Score — ChatGPT: 5/14 | Claude: 14/14**
+**Score — ChatGPT: 4/4 | Claude: 4/4**
 
 ---
 
-### Section 7 — Targets & Commitments (17 points)
+### Field 4 — Gross Written Premium (4 points)
 
-Third major error confirmed — water target conflation:
+| Attribute | ChatGPT | Claude |
+|---|---|---|
+| Value | ✅ £371.0m | ✅ £371.0m |
+| Currency Unit | ✅ £m | ✅ £m |
+| Page Reference | ⚠️ Page 5 (Strategic Report — secondary) | ✅ Page 7 (P&L Statement — primary) |
+| Confidence | ✅ High | ✅ High |
 
-```
-ChatGPT extracted (for Permian Basin water target):
-Target Value: 500,000,000 pounds
+**Score — ChatGPT: 3/4 | Claude: 4/4**
 
-Actual target (p.26):
-">90% recycled produced water by 2030"
-Current status: 87% (2024), up from 64% (2022)
-```
-
-The 500M lbs figure is from the advanced recycling capacity expansion — a completely separate program on a different page.
-
-**Score — ChatGPT: 2/17 | Claude: 17/17**
+> ⚠️ Both pages carry the same value, but page 5 is the Strategic Report narrative. Page 7 is the primary P&L statement. The prompt explicitly requires primary statement references.
 
 ---
 
-### Sections 8, 9, 10 (79 combined points)
+### Field 5 — Net Written Premium (4 points)
 
-- **Section 8 (Programs):** ChatGPT listed 3 of 27 programs; PSMS named generically as "Workforce Safety Program"; WHC conservation described only as PNG rather than the full US+Canada program network.
-- **Section 9 (Workforce):** Entire section NULL despite full 5-year diversity and training table on p.68.
-- **Section 10 (Flags):** 8 of 24 applicable flags raised. All RESTATED, MULTI-YEAR, and portfolio-scope SCOPE UNCLEAR flags missed.
+| Attribute | ChatGPT | Claude |
+|---|---|---|
+| Value | ✅ £307.0m | ✅ £307.0m |
+| Currency Unit | ✅ £m | ✅ £m |
+| Page Reference | ❌ Page 6 (incorrect — no such standalone page for NWP) | ✅ Page 7 (P&L Statement) |
+| Confidence | ❌ Medium (incorrectly low — value directly stated) | ✅ High |
 
-**Combined score — ChatGPT: 15/79 | Claude: 79/79**
+**Score — ChatGPT: 2/4 | Claude: 4/4**
+
+> ❌ Two errors on one field: wrong page reference AND under-stated confidence. Net Written Premium is explicitly stated on the P&L — High confidence is correct.
+
+---
+
+### Field 6 — Net Claims Incurred (4 points) ⭐ Critical Field
+
+| Attribute | ChatGPT | Claude |
+|---|---|---|
+| Value | ❌ **(£131.4m) — WRONG YEAR** | ✅ **(£138.4m) — correct 2014 value** |
+| Currency Unit | ✅ £m | ✅ £m |
+| Page Reference | ✅ Page 7 | ✅ Page 7 |
+| Confidence | ✅ High | ✅ High |
+
+**Score — ChatGPT: 3/4 | Claude: 4/4**
+
+> ❌ **Critical error confirmed.** Checked P&L Statement page 7 directly:
+> ```
+> Claims incurred, net of reinsurance — 2014: (138.4)
+> Claims incurred, net of reinsurance — 2013: (131.2)
+> ```
+> ChatGPT extracted **(£131.4m)** — close to but not exactly matching the 2013 comparative of (£131.2m), suggesting a misread of the prior-year column. In a regulatory submission or audit, submitting a prior-year figure as current-year data constitutes a **material misstatement.**
+
+---
+
+### Field 7 — Net Operating Expenses (4 points)
+
+| Attribute | ChatGPT | Claude |
+|---|---|---|
+| Value | ✅ (£108.0m) | ✅ (£108.0m) |
+| Currency Unit | ✅ £m | ✅ £m |
+| Page Reference | ✅ Page 7 | ✅ Page 7 |
+| Confidence | ✅ High | ✅ High |
+
+**Score — ChatGPT: 4/4 | Claude: 4/4**
+
+---
+
+### Field 8 — Profit or Loss Before Tax (4 points)
+
+| Attribute | ChatGPT | Claude |
+|---|---|---|
+| Value | ✅ £60.5m | ✅ £60.5m |
+| Currency Unit | ✅ £m | ✅ £m |
+| Page Reference | ✅ Page 8 | ✅ Page 8 |
+| Confidence | ✅ High | ✅ High |
+
+**Score — ChatGPT: 4/4 | Claude: 4/4**
+
+---
+
+### Field 9 — Combined Ratio (4 points)
+
+| Attribute | ChatGPT | Claude |
+|---|---|---|
+| Value | ✅ 83.5% | ✅ 83.5% |
+| Currency Unit | ✅ % | ✅ % |
+| Page Reference | ✅ Page 5 | ✅ Page 5 |
+| Confidence | ✅ High | ✅ High |
+
+**Score — ChatGPT: 4/4 | Claude: 4/4**
+
+---
+
+### Field 10 — Total Assets (4 points)
+
+| Attribute | ChatGPT | Claude |
+|---|---|---|
+| Value | ✅ £808.6m | ✅ £808.6m |
+| Currency Unit | ✅ £m | ✅ £m |
+| Page Reference | ✅ Page 9 | ✅ Page 9 |
+| Confidence | ✅ High | ✅ High |
+
+**Score — ChatGPT: 4/4 | Claude: 4/4**
+
+---
+
+### Field 11 — Members' Funds (4 points)
+
+| Attribute | ChatGPT | Claude |
+|---|---|---|
+| Value | ✅ £105.6m | ✅ £105.6m |
+| Currency Unit | ✅ £m | ✅ £m |
+| Page Reference | ⚠️ Page 23 (Notes — reconciliation table, secondary) | ✅ Page 10 (Balance Sheet — primary) |
+| Confidence | ⚠️ Medium (incorrectly low — directly stated on Balance Sheet) | ✅ High |
+
+**Score — ChatGPT: 2/4 | Claude: 4/4**
+
+> ⚠️ Same pattern as Net Written Premium — ChatGPT found the value in the Notes first rather than tracing to the Balance Sheet. Confidence rated Medium despite the value being unambiguously stated.
+
+---
+
+## 📊 Validation Results — Part 2: Qualitative Analysis
+
+### A. Classes of Business
+
+| Criterion | ChatGPT | Claude |
+|---|---|---|
+| Source consistency | ❌ Mixed — pulled from both Strategic Report (page 5) and Segmental Analysis Note (page 16) | ✅ Single source — Segmental Analysis Note (page 16) |
+| Taxonomy accuracy | ❌ "Casualty" and "Property" are portfolio mix % categories, not insurance classes | ✅ All entries are insurance class labels |
+| Completeness | ⚠️ 6 items listed but 2 are from wrong framework | ✅ 5 items, all from correct framework |
+
+**Score — ChatGPT: 1/3 | Claude: 3/3**
+
+> ❌ ChatGPT mixed two classification frameworks in a single list:
+> - **"Casualty" (32%) and "Property" (68%)** — these are portfolio split categories from the Strategic Report page 5, expressed as percentage weights
+> - **"Marine, aviation and transport", "Fire and other damage to property", "Third party liability"** — these are insurance class labels from the Segmental Analysis note page 16
+>
+> These are fundamentally different taxonomies. Presenting them together would mislead any downstream portfolio or regulatory analysis.
+
+---
+
+### B. Top 3 Risk Factors
+
+| Criterion | ChatGPT | Claude |
+|---|---|---|
+| Risk 1 — Identified correctly | ✅ Underwriting risk | ✅ Underwriting risk |
+| Risk 1 — Supporting detail | ❌ Label only | ✅ Mechanisms explained (premium insufficiency, catastrophe aggregation) |
+| Risk 2 — Identified correctly | ✅ Claims reserves risk | ✅ Claims reserves risk |
+| Risk 2 — Supporting detail | ❌ Label only | ✅ Includes £3.3m profit sensitivity figure from Notes |
+| Risk 3 — Identified correctly | ✅ Credit risk | ✅ Credit risk |
+| Risk 3 — Supporting detail | ❌ Label only | ✅ Counterparty detail — investment portfolio + reinsurance debtors |
+
+**Score — ChatGPT: 3/6 | Claude: 6/6**
+
+---
+
+### C. Performance Summary
+
+| Criterion | ChatGPT | Claude |
+|---|---|---|
+| Profit figure cited | ❌ Not mentioned | ✅ £60.5m stated |
+| Year reference | ❌ No year context | ✅ "ninth successive year" included |
+| Investment income driver | ❌ Not mentioned | ✅ Improved investment returns cited |
+| Combined ratio cited | ⚠️ Referenced generically | ✅ 83.5% stated explicitly |
+| Word count within 25-word limit | ✅ 20 words | ✅ 25 words |
+
+**Score — ChatGPT: 2/5 | Claude: 5/5**
 
 ---
 
 ## 🔍 Root Cause Analysis
 
-### Why did ChatGPT miss the data table?
+### Why did ChatGPT make errors on specific fields?
 
-**Hypothesis confirmed:** The pattern of errors strongly suggests ChatGPT drew primarily from the Executive Summary (pp. 1–8) rather than the Performance Data Table (pp. 67–69).
+**Hypothesis confirmed:** The pattern of errors points to two distinct failure modes:
 
-Evidence:
-1. The "25%" error only appears in narrative sections — not in the data table
-2. The water target conflation: the $500M lbs figure appears in the Executive Summary snapshot on p.7, while the actual water target is in the body section on p.26
-3. The 3 standards listed (IOGP, GRI, ISO 14001) are the ones mentioned in the introduction — the full list is distributed throughout the report
-4. All correctly extracted values (LTIR 0.02, water 98%) are prominently featured in the Executive Summary narrative
+**Failure Mode 1 — Year-column discipline**
+The P&L Statement and Balance Sheet both present 2014 and 2013 figures side by side in adjacent columns. ChatGPT extracted the 2013 comparative value for Net Claims Incurred instead of the 2014 current year value. This suggests the model did not anchor to the correct column header before reading down the rows.
 
-**This suggests a positional bias** — the model gave more weight to content at the beginning of the document and either truncated or deprioritized the data table at pp. 67–69.
+```
+P&L Page 7 — two-column layout:
+                              2014 £m    2013 £m
+Claims incurred net of RI    (138.4)    (131.2)
+                                ↑           ↑
+                           Claude read  ChatGPT read
+```
 
-### Why did Claude succeed?
+**Failure Mode 2 — Source hierarchy compliance**
+For GWP, Net Written Premium, and Members' Funds, ChatGPT extracted values from whichever section it encountered first — the Strategic Report or Notes — rather than tracing to the primary P&L or Balance Sheet. This also explains the under-stated Medium confidence ratings: the model was less certain because it was not reading from the primary statement.
 
-1. Treated the performance table as the authoritative source and extracted systematically
-2. Cross-referenced narrative text with table values (e.g., flagged when Executive Summary rounded $199.9M to "$200M")
-3. Maintained schema discipline throughout — every section fully populated regardless of whether values existed
-4. Applied data quality flags proactively without being prompted to flag specific items
+**Failure Mode 3 — Taxonomy conflation (Part 2)**
+ChatGPT pulled classification terms from multiple sections without recognising they belonged to different frameworks. "Casualty/Property" (Strategic Report, portfolio weights) and "Marine, aviation and transport" (Segmental Analysis, insurance classes) are not interchangeable.
+
+### Why did Claude succeed across all fields?
+
+1. Consistently traced values to primary financial statements (P&L and Balance Sheet) before accepting secondary sources
+2. Applied correct year-column discipline throughout the two-column P&L and Balance Sheet tables
+3. Calibrated confidence ratings to reflect source quality — High only when value was directly and unambiguously stated in a primary statement
+4. Drew qualitative analysis from a single, authoritative source per section rather than mixing across sections
+5. Included quantitative context in qualitative fields (£3.3m sensitivity, ninth successive year, 83.5% combined ratio)
 
 ---
 
 ## 📈 Final Scorecard
 
-| Section | ChatGPT | Claude | Gap |
-|---------|---------|--------|-----|
-| S1 — Metadata | 4/12 (33%) | 12/12 (100%) | 67pp |
-| S2 — Safety | 8/42 (19%) | 42/42 (100%) | 81pp |
-| S3 — Health | 6/9 (67%) | 9/9 (100%) | 33pp |
-| S4 — Environment | 7/45 (16%) | 45/45 (100%) | 84pp |
-| S5 — Incidents | 1/7 (14%) | 7/7 (100%) | 86pp |
-| S6 — Regulatory | 5/14 (36%) | 14/14 (100%) | 64pp |
-| S7 — Targets | 2/17 (12%) | 17/17 (100%) | 88pp |
-| S8 — Programs | 2/27 (7%) | 27/27 (100%) | 93pp |
-| S9 — Workforce | 5/28 (18%) | 28/28 (100%) | 82pp |
-| S10 — Flags | 8/24 (33%) | 24/24 (100%) | 67pp |
-| **TOTAL** | **48/225 (21%)** | **225/225 (100%)** | **79pp** |
+### Part 1 — Structured Financial Data
 
-### 🏆 Winner: Claude — all 10 sections
+| Field | Max Points | ChatGPT | Claude |
+|---|---|---|---|
+| Syndicate Number | 4 | 4 (100%) | 4 (100%) |
+| Managing Agent | 4 | 3 (75%) | 4 (100%) |
+| Year of Account | 4 | 4 (100%) | 4 (100%) |
+| Gross Written Premium | 4 | 3 (75%) | 4 (100%) |
+| Net Written Premium | 4 | 2 (50%) | 4 (100%) |
+| **Net Claims Incurred** | **4** | **3 (75%) ❌ value wrong** | **4 (100%)** |
+| Net Operating Expenses | 4 | 4 (100%) | 4 (100%) |
+| Profit Before Tax | 4 | 4 (100%) | 4 (100%) |
+| Combined Ratio | 4 | 4 (100%) | 4 (100%) |
+| Total Assets | 4 | 4 (100%) | 4 (100%) |
+| Members' Funds | 4 | 2 (50%) | 4 (100%) |
+| **Part 1 Total** | **44** | **37 (84%)** | **44 (100%)** |
+
+### Part 2 — Qualitative Analysis
+
+| Section | Max Points | ChatGPT | Claude |
+|---|---|---|---|
+| Classes of Business | 3 | 1 (33%) | 3 (100%) |
+| Top 3 Risk Factors | 6 | 3 (50%) | 6 (100%) |
+| Performance Summary | 5 | 2 (40%) | 5 (100%) |
+| **Part 2 Total** | **14** | **6 (43%)** | **14 (100%)** |
+
+### Combined Overall
+
+| | Max Points | ChatGPT | Claude |
+|---|---|---|---|
+| **TOTAL** | **58** | **43 (74%)** | **58 (100%)** |
+
+### 🏆 Winner: Claude — all fields, all sections
 
 ---
 
 ## 💡 Conclusions & Lessons Learned
 
-### For AI users doing document extraction:
+### For AI users doing financial document extraction:
 
-1. **Specify the data source explicitly.** Saying "extract from the performance data table on page 67" may significantly improve ChatGPT results. The model may not prioritise structured tables over narrative prose by default.
+1. **Specify the column explicitly.** In two-column financial statements (current year vs. prior year), instruct the model: *"Extract 2014 values only — ignore the 2013 comparative column."* This may prevent year-mix errors like the Net Claims Incurred failure.
 
-2. **Always validate extracted values against source tables.** A plausible-looking output can contain critical factual errors (as seen with the SOx/NOx/VOC values).
+2. **Specify source hierarchy.** Adding *"prefer primary financial statements (P&L, Balance Sheet) over Notes and narrative sections"* may improve page reference accuracy and confidence calibration.
 
-3. **Length ≠ completeness, but brevity can indicate shallowness.** ChatGPT's 3-page output vs. Claude's 14-page output was an early signal that something was missing.
+3. **Always validate against the primary statement.** A value appearing in the Strategic Report and in the Notes does not mean it is the authoritative figure. The P&L and Balance Sheet are the ground truth.
 
-4. **For compliance-critical use cases**, Claude's NULL discipline and data quality flagging make it significantly more reliable. An auditor needs to know what the model *couldn't find*, not just what it found.
+4. **Length and precision signal depth.** Claude's more detailed output — with specific figures in qualitative sections and £3.3m sensitivity data in risk factors — reflected genuine document depth, not padding.
 
-5. **Test with known ground truth.** This study only worked because the source document had a clear, verifiable performance table. In cases without a structured table, validation is harder.
+5. **For regulatory or audit use cases**, a single wrong-year figure (Net Claims Incurred) in a Lloyd's submission would constitute a material misstatement. The confidence rating of High on a factually wrong value makes it more dangerous, not less.
 
 ### For prompt engineers:
 
-- Adding explicit instructions like "prioritise structured tables and data appendices over narrative text" may help models with positional bias
-- The NULL mandate was the single most important rule — it made every omission visible
-- Page citation requirements are invaluable for post-extraction validation
+- Explicit column anchoring instructions ("2014 column only") are likely the single highest-value addition to this prompt for improving ChatGPT accuracy
+- The source hierarchy rule ("primary statements over notes") should be included as a numbered instruction, not buried in general guidance
+- Confidence ratings need a defined rubric — without one, models calibrate inconsistently (Medium vs. High for identical evidence quality)
+- Page citation requirements remain essential: they expose source hierarchy violations immediately during validation
 
 ---
 
 ## ✅ Day 3 Outputs
 
-- [x] 225-point validation table completed
-- [x] 3 critical factual errors confirmed in ChatGPT output
-- [x] Root cause analysis documented
-- [x] Final scorecard produced
-- [x] Validation PDF report generated → [`../validation/HSE_Validation_Report.pdf`](../validation/)
+- [x] 58-point validation completed across all fields and qualitative sections
+- [x] 1 critical factual error confirmed in ChatGPT output (Net Claims Incurred — wrong year)
+- [x] 2 source hierarchy violations confirmed (GWP page reference, Members' Funds page reference)
+- [x] 2 confidence calibration errors confirmed (Net Written Premium, Members' Funds)
+- [x] 1 taxonomy conflation error confirmed (Classes of Business — mixed frameworks)
+- [x] Root cause analysis documented (3 distinct failure modes)
+- [x] Final scorecard produced → [`../validation_scorecard.md`](../validation_scorecard.md)
 - [x] Study conclusions written
 
 ---
 
-## ← Back: [Day 2 — Running the Extractions](./day2-extractions.md) | [README](../README.md)
+
