@@ -151,8 +151,8 @@ The taxonomy error in Part 2 reinforces this: ChatGPT pulled terms from whicheve
 
 ## ✅ Day 2 Outputs
 
-- [x] ChatGPT extraction collected and saved → [`../extractions/chatgpt-output.md`](../extractions/chatgpt-output.md)
-- [x] Claude extraction collected and saved → [`../extractions/claude-output.md`](../extractions/claude-output.md)
+- [x] ChatGPT extraction collected
+- [x] Claude extraction collected
 - [x] 3 critical red flags identified in ChatGPT output
 - [x] Side-by-side first impression documented
 - [x] Root cause hypothesis formed (year-column discipline + source hierarchy compliance)
