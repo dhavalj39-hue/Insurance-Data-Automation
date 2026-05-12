@@ -159,4 +159,4 @@ The taxonomy error in Part 2 reinforces this: ChatGPT pulled terms from whicheve
 
 ---
 
-## ➡️ Next: [Day 3 — Validation & Scoring](./day3-validation.md)
+
