@@ -138,10 +138,3 @@ WHERE combined_ratio_pct < 100
 
 
 -- --------------------------------------------------------
--- QUERY 10: Full record for one specific syndicate
--- SELECT * returns every column
--- Replace 2791 with a syndicate number from your data
--- --------------------------------------------------------
-SELECT *
-FROM "syndicate_clean"
-WHERE syndicate_number = 2791;
