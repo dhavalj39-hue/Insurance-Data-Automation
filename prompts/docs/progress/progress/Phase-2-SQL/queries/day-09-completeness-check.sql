@@ -123,6 +123,29 @@ GROUP BY managing_agent
 ORDER BY completeness_pct ASC;
 
 
+
+SELECT
+    f.syndicate_number,
+    f.syndicate_name,
+    f.managing_agent,
+    f.year_of_account,
+    d.main_class_of_business,
+    d.active_status,
+    -- Financial data quality checks
+    CASE WHEN f.gwp_000s           IS NULL THEN 'MISSING' ELSE 'OK' END AS gwp_status,
+    CASE WHEN f.nwp_000s           IS NULL THEN 'MISSING' ELSE 'OK' END AS nwp_status,
+    CASE WHEN f.pbt_000s           IS NULL THEN 'MISSING' ELSE 'OK' END AS pbt_status,
+    CASE WHEN f.combined_ratio_pct IS NULL THEN 'MISSING' ELSE 'OK' END AS ratio_status,
+    CASE WHEN f.total_assets_000s  IS NULL THEN 'MISSING' ELSE 'OK' END AS assets_status,
+    CASE WHEN f.members_funds_000s IS NULL THEN 'MISSING' ELSE 'OK' END AS funds_status,
+    -- Detail data quality checks
+    CASE WHEN d.main_class_of_business IS NULL THEN 'MISSING' ELSE 'OK' END AS class_status,
+    CASE WHEN d.active_status          IS NULL THEN 'MISSING' ELSE 'OK' END AS active_status_check
+FROM syndicate_clean f
+LEFT JOIN syndicate_details d ON f.syndicate_number = d.syndicate_number
+ORDER BY f.syndicate_name;
+
+
 -- ============================================================
 -- WEEKLY LOG — paste your completeness rate here each week
 -- This becomes your quality improvement story for Day 24
