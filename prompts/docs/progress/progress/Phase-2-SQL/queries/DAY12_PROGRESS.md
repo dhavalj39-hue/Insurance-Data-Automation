@@ -55,22 +55,6 @@ WHERE active_status = 'Active'
 ORDER BY combined_ratio_pct ASC;
 ```
 
-### 4. Day 12 Full Challenge
-```sql
-SELECT
-    o.waiter_name,
-    SUM(o.total_amount)  AS total_sales,
-    CASE
-        WHEN SUM(o.total_amount) > 100 THEN 'Top Performer'
-        WHEN SUM(o.total_amount) > 50  THEN 'Mid Performer'
-        ELSE 'Low Performer'
-    END AS performance_label
-FROM orders o
-JOIN menu_items m ON o.order_id = m.order_id
-WHERE m.category = 'Mains'
-GROUP BY o.waiter_name
-ORDER BY total_sales DESC
-LIMIT 3;
 ```
 
 ---
