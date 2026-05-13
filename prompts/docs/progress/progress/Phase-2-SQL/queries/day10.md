@@ -5,7 +5,7 @@
 ### 1. Real Database Analysis
 - Database: Lloyd's Syndicate Data (SQLite)
 - Tool: DB Browser for SQLite
-- Tables: "syndicate_clean" and "syndicate_clean"
+- Tables: "syndicate_clean"
 
 ### 2. Queries Practiced
 
@@ -37,11 +37,14 @@ GROUP BY performance;
 #### NULL Detection
 ```sql
 SELECT
-  COUNT(*) AS total_rows,
-  SUM(CASE WHEN nep_000s = 'NULL' THEN 1 ELSE 0 END) AS nep_missing,
-  SUM(CASE WHEN uw_profit_000s = 'NULL' THEN 1 ELSE 0 END) AS uw_profit_missing,
-  SUM(CASE WHEN combined_ratio_pct = 'NULL' THEN 1 ELSE 0 END) AS combined_ratio_missing
-FROM "syndicate_clean";
+    COUNT(*)                                                        AS total_rows,
+    SUM(CASE WHEN gwp_000s           IS NULL THEN 1 ELSE 0 END)    AS missing_gwp,
+    SUM(CASE WHEN nwp_000s           IS NULL THEN 1 ELSE 0 END)    AS missing_nwp,
+    SUM(CASE WHEN pbt_000s           IS NULL THEN 1 ELSE 0 END)    AS missing_pbt,
+    SUM(CASE WHEN combined_ratio_pct IS NULL THEN 1 ELSE 0 END)    AS missing_ratio,
+    SUM(CASE WHEN total_assets_000s  IS NULL THEN 1 ELSE 0 END)    AS missing_assets,
+    SUM(CASE WHEN members_funds_000s IS NULL THEN 1 ELSE 0 END)    AS missing_funds
+FROM syndicate_clean;
 ```
 
 ### 3. Key Concepts Learned
