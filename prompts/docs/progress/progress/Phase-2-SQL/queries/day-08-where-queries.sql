@@ -1,7 +1,7 @@
 -- ============================================================
 -- DAY 8 — SELECT & WHERE — Filter Syndicate Data
 -- Lloyd's Syndicate Data Portfolio
--- Table: "SQL Master files"
+-- Table: "syndicate_clean"
 -- Phase 2: SQL Basics
 -- ============================================================
 -- SELECT = choose which columns to show
@@ -19,7 +19,7 @@ SELECT
     syndicate_name,
     managing_agent,
     combined_ratio_pct
-FROM "SQL Master files"
+FROM "syndicate_clean"
 WHERE combined_ratio_pct > 100;
 
 
@@ -33,7 +33,7 @@ SELECT
     syndicate_name,
     managing_agent,
     pbt_000s
-FROM "SQL Master files"
+FROM "syndicate_clean"
 WHERE pbt_000s > 0;
 
 
@@ -46,7 +46,7 @@ SELECT
     syndicate_number,
     syndicate_name,
     managing_agent
-FROM "SQL Master files"
+FROM "syndicate_clean"
 WHERE combined_ratio_pct IS NULL;
 
 
@@ -60,7 +60,7 @@ SELECT
     managing_agent,
     combined_ratio_pct,
     pbt_000s
-FROM "SQL Master files"
+FROM "syndicate_clean"
 WHERE combined_ratio_pct < 95;
 
 
@@ -75,7 +75,7 @@ SELECT
     managing_agent,
     pbt_000s,
     combined_ratio_pct
-FROM "SQL Master files"
+FROM "syndicate_clean"
 WHERE pbt_000s < 0;
 
 
@@ -88,7 +88,7 @@ SELECT
     syndicate_name,
     managing_agent,
     gwp_000s
-FROM "SQL Master files"
+FROM "syndicate_clean"
 WHERE gwp_000s > 100000;
 
 
@@ -104,7 +104,7 @@ SELECT
     gwp_000s,
     combined_ratio_pct,
     pbt_000s
-FROM "SQL Master files"
+FROM "syndicate_clean"
 WHERE managing_agent = 'Beazley Furlonge Ltd';
 
 
@@ -118,7 +118,7 @@ SELECT
     managing_agent,
     gwp_000s,
     pbt_000s
-FROM "SQL Master files"
+FROM "syndicate_clean"
 WHERE year_of_account = 2022;
 
 
@@ -132,7 +132,7 @@ SELECT
     managing_agent,
     combined_ratio_pct,
     pbt_000s
-FROM "SQL Master files"
+FROM "syndicate_clean"
 WHERE combined_ratio_pct < 100
   AND pbt_000s > 0;
 
@@ -143,5 +143,5 @@ WHERE combined_ratio_pct < 100
 -- Replace 2791 with a syndicate number from your data
 -- --------------------------------------------------------
 SELECT *
-FROM "SQL Master files"
+FROM "syndicate_clean"
 WHERE syndicate_number = 2791;
