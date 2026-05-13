@@ -5,7 +5,7 @@
 ### 1. Real Database Analysis
 - Database: Lloyd's Syndicate Data (SQLite)
 - Tool: DB Browser for SQLite
-- Tables: "SQL Master files" and "SQL Master files"
+- Tables: "syndicate_clean" and "syndicate_clean"
 
 ### 2. Queries Practiced
 
@@ -16,7 +16,7 @@ SELECT
   COUNT(*) AS syndicate_count,
   ROUND(AVG(combined_ratio_pct), 1) AS avg_combined_ratio,
   ROUND(AVG(pbt_000s), 0) AS avg_profit
-FROM "SQL Master files"
+FROM "syndicate_clean"
 GROUP BY managing_agent
 ORDER BY avg_combined_ratio ASC;
 ```
@@ -30,7 +30,7 @@ SELECT
     ELSE 'Unknown'
   END AS performance,
   COUNT(*) AS count
-FROM "SQL Master files"
+FROM "syndicate_clean"
 GROUP BY performance;
 ```
 
@@ -41,7 +41,7 @@ SELECT
   SUM(CASE WHEN nep_000s = 'NULL' THEN 1 ELSE 0 END) AS nep_missing,
   SUM(CASE WHEN uw_profit_000s = 'NULL' THEN 1 ELSE 0 END) AS uw_profit_missing,
   SUM(CASE WHEN combined_ratio_pct = 'NULL' THEN 1 ELSE 0 END) AS combined_ratio_missing
-FROM "SQL Master files";
+FROM "syndicate_clean";
 ```
 
 ### 3. Key Concepts Learned
