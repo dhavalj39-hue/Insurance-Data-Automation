@@ -105,7 +105,7 @@ SELECT
     combined_ratio_pct,
     pbt_000s
 FROM "syndicate_clean"
-WHERE managing_agent = 'Beazley Furlonge Ltd';
+WHERE managing_agent = 'Beazley Furlonge Limited';
 
 
 -- --------------------------------------------------------
