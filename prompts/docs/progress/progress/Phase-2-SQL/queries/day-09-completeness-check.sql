@@ -1,7 +1,7 @@
 -- ============================================================
 -- DAY 9 — COUNT & NULL — Data Quality Check
 -- Lloyd's Syndicate Data Portfolio
--- Table: "SQL Master files"
+-- Table: "syndicate_clean"
 -- Phase 2: SQL Basics
 -- ============================================================
 -- Run these queries after EVERY new batch of data you add.
@@ -27,7 +27,7 @@ SELECT
     SUM(CASE WHEN combined_ratio_pct   IS NULL THEN 1 ELSE 0 END)  AS missing_ratio,
     SUM(CASE WHEN total_assets_000s    IS NULL THEN 1 ELSE 0 END)  AS missing_assets,
     SUM(CASE WHEN members_funds_000s   IS NULL THEN 1 ELSE 0 END)  AS missing_members_funds
-FROM "SQL Master files";
+FROM "syndicate_clean";
 
 
 -- --------------------------------------------------------
@@ -48,7 +48,7 @@ SELECT
             THEN 1 ELSE 0 END
         ) / COUNT(*),
     1) AS completeness_rate_percent
-FROM "SQL Master files";
+FROM "syndicate_clean";
 
 
 -- --------------------------------------------------------
@@ -67,7 +67,7 @@ SELECT
     CASE WHEN pbt_000s           IS NULL THEN 'MISSING' ELSE 'OK' END AS pbt_status,
     CASE WHEN combined_ratio_pct IS NULL THEN 'MISSING' ELSE 'OK' END AS ratio_status,
     CASE WHEN total_assets_000s  IS NULL THEN 'MISSING' ELSE 'OK' END AS assets_status
-FROM "SQL Master files"
+FROM "syndicate_clean"
 WHERE
     gwp_000s           IS NULL
     OR net_claims_000s    IS NULL
@@ -85,7 +85,7 @@ SELECT
     SUM(CASE WHEN combined_ratio_pct IS NOT NULL THEN 1 ELSE 0 END) AS ratio_present,
     SUM(CASE WHEN combined_ratio_pct IS NULL     THEN 1 ELSE 0 END) AS ratio_missing,
     COUNT(*)                                                         AS total
-FROM "SQL Master files";
+FROM "syndicate_clean";
 
 
 -- --------------------------------------------------------
@@ -99,7 +99,7 @@ SELECT
     SUM(CASE WHEN combined_ratio_pct IS NULL THEN 1 ELSE 0 END)    AS missing_ratio,
     SUM(CASE WHEN pbt_000s           IS NULL THEN 1 ELSE 0 END)    AS missing_pbt,
     SUM(CASE WHEN gwp_000s           IS NULL THEN 1 ELSE 0 END)    AS missing_gwp
-FROM "SQL Master files"
+FROM "syndicate_clean"
 GROUP BY year_of_account
 ORDER BY year_of_account DESC;
 
@@ -120,7 +120,7 @@ SELECT
             THEN 1 ELSE 0 END
         ) / COUNT(*),
     1) AS completeness_pct
-FROM "SQL Master files"
+FROM "syndicate_clean"
 GROUP BY managing_agent
 ORDER BY completeness_pct ASC;
 
