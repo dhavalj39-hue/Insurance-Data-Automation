@@ -18,11 +18,11 @@
 
 ### 1. Active Syndicates
 ```sql
-SELECT syndicate_number, syndicate_name, managing_agent
-FROM "syndicate_clean" f
+SELECT f.syndicate_number, f.syndicate_name, f.managing_agent
+FROM syndicate_clean f
 JOIN syndicate_details d
     ON f.syndicate_number = d.syndicate_number
-WHERE active_status = 'Active';
+WHERE d.active_status = 'Active';
 ```
 
 ### 2. Managing Agent Scorecard
