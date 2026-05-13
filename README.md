@@ -123,18 +123,18 @@ Every syndicate now automatically classified — no manual work needed.
 
 ```sql
 SELECT
-    syndicate_number,
-    syndicate_name,
-    combined_ratio_pct,
+    f.syndicate_number,
+    f.syndicate_name,
+    f.combined_ratio_pct,
     CASE
-        WHEN CAST(combined_ratio_pct AS REAL) < 95  THEN 'Strong Performer'
-        WHEN CAST(combined_ratio_pct AS REAL) < 100 THEN 'Marginal'
-        WHEN CAST(combined_ratio_pct AS REAL) < 110 THEN 'Loss Making'
-        WHEN CAST(combined_ratio_pct AS REAL) >= 110 THEN 'Significant Loss'
-        ELSE 'No Data'
+        WHEN f.combined_ratio_pct IS NULL   THEN 'No Data'
+        WHEN f.combined_ratio_pct < 95      THEN 'Strong Performer'
+        WHEN f.combined_ratio_pct < 100     THEN 'Marginal'
+        WHEN f.combined_ratio_pct < 110     THEN 'Loss Making'
+        WHEN f.combined_ratio_pct >= 110    THEN 'Significant Loss'
     END AS performance_label
-FROM "SQL Master files"
-ORDER BY CAST(combined_ratio_pct AS REAL) ASC;
+FROM syndicate_clean f
+ORDER BY f.combined_ratio_pct ASC;
 ```
 
 ### My Syndicates Labelled
