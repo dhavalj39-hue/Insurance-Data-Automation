@@ -19,7 +19,7 @@
 ### 1. Active Syndicates
 ```sql
 SELECT syndicate_number, syndicate_name, managing_agent
-FROM "SQL Master files" f
+FROM "syndicate_clean" f
 JOIN syndicate_details d
     ON f.syndicate_number = d.syndicate_number
 WHERE active_status = 'Active';
@@ -28,7 +28,7 @@ WHERE active_status = 'Active';
 ### 2. Managing Agent Scorecard
 ```sql
 SELECT managing_agent, COUNT(*) AS total_syndicates
-FROM "SQL Master files" f
+FROM "syndicate_clean" f
 JOIN syndicate_details d ON f.syndicate_number = d.syndicate_number
 WHERE active_status = 'Active'
 GROUP BY managing_agent;
@@ -48,7 +48,7 @@ SELECT
         WHEN combined_ratio_pct >= 110 THEN 'Significant Loss'
         ELSE 'No Data'
     END AS performance_label
-FROM "SQL Master files" f
+FROM "syndicate_clean" f
 JOIN syndicate_details d ON f.syndicate_number = d.syndicate_number
 WHERE active_status = 'Active'
   AND combined_ratio_pct != 'NULL'
