@@ -16,18 +16,16 @@
 -- Returns 1 row showing missing count per key field
 -- --------------------------------------------------------
 SELECT
-    COUNT(*)                                                       AS total_syndicates,
-    SUM(CASE WHEN syndicate_name       IS NULL THEN 1 ELSE 0 END)  AS missing_syndicate_name,
-    SUM(CASE WHEN managing_agent       IS NULL THEN 1 ELSE 0 END)  AS missing_agent,
-    SUM(CASE WHEN gwp_000s             IS NULL THEN 1 ELSE 0 END)  AS missing_gwp,
-    SUM(CASE WHEN nwp_000s             IS NULL THEN 1 ELSE 0 END)  AS missing_nwp,
-    SUM(CASE WHEN net_claims_000s      IS NULL THEN 1 ELSE 0 END)  AS missing_claims,
-    SUM(CASE WHEN net_opex_000s        IS NULL THEN 1 ELSE 0 END)  AS missing_opex,
-    SUM(CASE WHEN pbt_000s             IS NULL THEN 1 ELSE 0 END)  AS missing_pbt,
-    SUM(CASE WHEN combined_ratio_pct   IS NULL THEN 1 ELSE 0 END)  AS missing_ratio,
-    SUM(CASE WHEN total_assets_000s    IS NULL THEN 1 ELSE 0 END)  AS missing_assets,
-    SUM(CASE WHEN members_funds_000s   IS NULL THEN 1 ELSE 0 END)  AS missing_members_funds
-FROM "syndicate_clean";
+    COUNT(*)                                                        AS total_syndicates,
+    SUM(CASE WHEN syndicate_name     IS NULL THEN 1 ELSE 0 END)    AS missing_syndicate_name,
+    SUM(CASE WHEN managing_agent     IS NULL THEN 1 ELSE 0 END)    AS missing_agent,
+    SUM(CASE WHEN gwp_000s           IS NULL THEN 1 ELSE 0 END)    AS missing_gwp,
+    SUM(CASE WHEN nwp_000s           IS NULL THEN 1 ELSE 0 END)    AS missing_nwp,
+    SUM(CASE WHEN pbt_000s           IS NULL THEN 1 ELSE 0 END)    AS missing_pbt,
+    SUM(CASE WHEN combined_ratio_pct IS NULL THEN 1 ELSE 0 END)    AS missing_ratio,
+    SUM(CASE WHEN total_assets_000s  IS NULL THEN 1 ELSE 0 END)    AS missing_assets,
+    SUM(CASE WHEN members_funds_000s IS NULL THEN 1 ELSE 0 END)    AS missing_funds
+FROM syndicate_clean;
 
 
 -- --------------------------------------------------------
