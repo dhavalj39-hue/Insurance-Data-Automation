@@ -5,7 +5,7 @@
 ### 1. Real Database Analysis
 - Database: Lloyd's Syndicate Data (SQLite)
 - Tool: DB Browser for SQLite
-- Tables: "SQL Master files" and "SQL Master files_fixed"
+- Tables: "SQL Master files" and "SQL Master files"
 
 ### 2. Queries Practiced
 
@@ -16,7 +16,7 @@ SELECT
   COUNT(*) AS syndicate_count,
   ROUND(AVG(combined_ratio_pct), 1) AS avg_combined_ratio,
   ROUND(AVG(pbt_000s), 0) AS avg_profit
-FROM "SQL Master files_fixed"
+FROM "SQL Master files"
 GROUP BY managing_agent
 ORDER BY avg_combined_ratio ASC;
 ```
@@ -30,7 +30,7 @@ SELECT
     ELSE 'Unknown'
   END AS performance,
   COUNT(*) AS count
-FROM "SQL Master files_fixed"
+FROM "SQL Master files"
 GROUP BY performance;
 ```
 
