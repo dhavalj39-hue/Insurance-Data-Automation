@@ -8,7 +8,7 @@
 -- WHAT I LEARNED TODAY:
 -- JOIN combines two tables together where a
 -- matching column exists in both tables.
--- SQL Master files  = financial data (numbers)
+-- syndicate_clean  = financial data (numbers)
 -- syndicate_details = business data (context)
 -- Bridge = syndicate_number (exists in both)
 -- ================================================
@@ -16,7 +16,7 @@
 
 -- ================================================
 -- STEP 1: Create syndicate_details table
--- WHY: SQL Master files has no domicile,
+-- WHY: syndicate_clean has no domicile,
 --      class of business or active status.
 --      This table adds that business context.
 -- ================================================
@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS syndicate_details (
 -- ================================================
 -- STEP 2: Insert data for all 6 syndicates
 -- WHY: Must use EXACT syndicate numbers from
---      SQL Master files or JOIN returns 0 rows.
+--      syndicate_clean or JOIN returns 0 rows.
 -- NOTE: Active/Inactive and domicile data sourced
 --       from lloyds.com market directory
 --       and syndicate PDF cover pages.
@@ -49,7 +49,7 @@ INSERT OR IGNORE INTO syndicate_details VALUES
 -- STEP 3: Basic JOIN — core Day 11 query
 -- WHY: Combines financial numbers with business
 --      context into one single result.
---      f. = columns from SQL Master files
+--      f. = columns from syndicate_clean
 --      d. = columns from syndicate_details
 --      ON = matching rule (syndicate number)
 -- ================================================
@@ -63,7 +63,7 @@ SELECT
     f.gwp_000s,
     f.combined_ratio_pct,
     f.pbt_000s
-FROM "SQL Master files" f
+FROM "syndicate_clean" f
 JOIN syndicate_details d
     ON f.syndicate_number = d.syndicate_number
 ORDER BY f.combined_ratio_pct ASC;
@@ -90,7 +90,7 @@ SELECT
     f.combined_ratio_pct,
     f.total_assets_000s,
     f.members_funds_000s
-FROM "SQL Master files" f
+FROM "syndicate_clean" f
 JOIN syndicate_details d
     ON f.syndicate_number = d.syndicate_number;
 
@@ -104,7 +104,7 @@ SELECT
     d.main_class_of_business,
     COUNT(*)                                         AS syndicate_count,
     AVG(CAST(f.combined_ratio_pct AS REAL))          AS avg_combined_ratio
-FROM "SQL Master files" f
+FROM "syndicate_clean" f
 JOIN syndicate_details d
     ON f.syndicate_number = d.syndicate_number
 WHERE f.combined_ratio_pct != 'NULL'
@@ -124,7 +124,7 @@ SELECT
     d.main_class_of_business,
     f.combined_ratio_pct,
     f.pbt_000s
-FROM "SQL Master files" f
+FROM "syndicate_clean" f
 JOIN syndicate_details d
     ON f.syndicate_number = d.syndicate_number
 WHERE d.active_status       = 'Active'
@@ -147,7 +147,7 @@ SELECT
     f.combined_ratio_pct,
     d.main_class_of_business,
     d.active_status
-FROM "SQL Master files" f
+FROM "syndicate_clean" f
 LEFT JOIN syndicate_details d
     ON f.syndicate_number = d.syndicate_number;
 
@@ -161,7 +161,7 @@ LEFT JOIN syndicate_details d
 SELECT
     f.syndicate_number,
     f.syndicate_name
-FROM "SQL Master files" f
+FROM "syndicate_clean" f
 LEFT JOIN syndicate_details d
     ON f.syndicate_number = d.syndicate_number
 WHERE d.syndicate_number IS NULL;
