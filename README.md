@@ -35,19 +35,23 @@ This project builds a fully automated Lloyd's syndicate data pipeline:
 
 All data extracted from real publicly available Lloyd's syndicate annual reports from lloyds.com
 
-| Field | SQL Column | Why It Matters |
-| --- | --- | --- |
-| Syndicate Number | syndicate_number | Unique identifier |
-| Managing Agent | managing_agent | Who runs the syndicate |
-| Year of Account | year_of_account | Which underwriting year |
-| Gross Written Premium | gwp_000s | Total premiums before reinsurance |
-| Net Written Premium | nwp_000s | Premiums after reinsurance |
-| Net Claims Incurred | net_claims_000s | Claims net of reinsurance |
-| Net Operating Expenses | net_opex_000s | Running costs |
-| Profit / Loss Before Tax | pbt_000s | Bottom line performance |
-| Combined Ratio | combined_ratio_pct | Under 100 = profitable |
-| Total Assets | total_assets_000s | Total syndicate assets |
-| Members Funds | members_funds_000s | Capital backing |
+| Field | SQL Column | Data Type | Why It Matters |
+| --- | --- | --- | --- |
+| Syndicate Number | syndicate_number | INTEGER | Unique identifier |
+| Syndicate Name | syndicate_name | TEXT | Full name of syndicate |
+| Managing Agent | managing_agent | TEXT | Who runs the syndicate |
+| Year of Account | year_of_account | INTEGER | Which underwriting year |
+| Report Type | report_type | TEXT | Annual Accounts or Closed UY (36 months) |
+| Gross Written Premium | gwp_000s | REAL | Total premiums before reinsurance |
+| Net Written Premium | nwp_000s | REAL | Premiums after reinsurance |
+| Net Claims Incurred | net_claims_000s | REAL | Claims net of reinsurance recoveries |
+| Net Operating Expenses | net_opex_000s | REAL | Running costs of the syndicate |
+| Profit / Loss Before Tax | pbt_000s | REAL | Bottom line performance |
+| Combined Ratio | combined_ratio_pct | REAL | Under 100 = profitable |
+| Total Assets | total_assets_000s | REAL | Total syndicate asset base |
+| Members Funds | members_funds_000s | REAL | Capital backing the syndicate |
+
+> All figures in £000s. NULL values present where data not available in source PDF.
 
 ---
 
@@ -180,11 +184,26 @@ ORDER BY f.combined_ratio_pct ASC;
 
 ## My Database — Current Status
 
-| Table | Rows | What It Contains |
-| --- | --- | --- |
-| `SQL Master files` | 7 | Financial data — GWP, CR, profit, claims |
-| `SQL Master files_fixed` | 7 | Same data with REAL number types |
-| `syndicate_details` | 6 | Business class, domicile, active status |
+**Table: `syndicate_clean`** — 11 rows, 13 columns
+
+| Syndicate | Name | Managing Agent | Year | Report Type | GWP (£000s) | CR % | PBT (£000s) |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 623 | Beazley | Beazley Furlonge Limited | 2023 | Annual Accounts | 974,700 | 84.0 | 180,800 |
+| 2488 | ACE Underwriting | ACE Underwriting Agencies Ltd | 2014 | Annual Accounts | 375,327 | 62.0 | 154,645 |
+| 1225 | AEGIS London | AEGIS Managing Agency Ltd | 2014 | Annual Accounts | 371,000 | 84.0 | 60,500 |
+| 1274 | Antares | Antares Managing Agency Limited | 2014 | Annual Accounts | 250,576 | 92.0 | 18,386 |
+| 1856 | Arcus/Barbican | Barbican Managing Agency Limited | 2019 | Annual Accounts | 106,530 | 106.0 | 0 |
+| 2358 | Nephila | Nephila Syndicate Management Ltd | 2022 | Annual Accounts | 48,598 | 88.3 | 2,282 |
+| 780 | RiverStone | RiverStone Managing Agency Ltd | 2020 | Annual Accounts | 8,309 | NULL | 17,029 |
+| 1110 | R&Q | R&Q Syndicate Management Ltd | 2023 | Annual Accounts | 5,561 | NULL | 0 |
+| 1254 | Polo | Polo Managing Agency Limited | 2022 | Annual Accounts | 2,507 | NULL | 2,117 |
+| 6110 | Pembroke | Pembroke Managing Agency Ltd | 2015 | Annual Accounts | 1,140 | 68.0 | 1,242 |
+| 6110 | Pembroke | Pembroke Managing Agency Ltd | 2013 | Closed UY (36 months) | 40,988 | NULL | 922 |
+
+**Data quality notes:**
+- 4 syndicates have NULL combined_ratio_pct — flagged by Day 9 completeness check query
+- net_claims_000s and net_opex_000s are 0 for most syndicates — data not available in source PDFs
+- report_type column added — distinguishes Annual Accounts from Closed Underwriting Year records
 
 ---
 
@@ -219,6 +238,8 @@ Insurance-Data-Automation/
 │   └── pipeline/           ← coming Days 20–26
 │
 ├── Phase-5-Job-Ready/      ← coming Days 27–30
+│
+├── syndicate_clean.csv     ← live database export (11 syndicates, 13 columns)
 │
 └── README.md
 ```
