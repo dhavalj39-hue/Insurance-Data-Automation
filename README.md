@@ -1,6 +1,6 @@
 # Lloyd's Syndicate Data Automation Portfolio
 
-**SQL · Power BI · AI Tools (Claude & ChatGPT)**
+**SQL · Power BI · AI Tools (Claude & ChatGPT)**  
 **Real Data: Lloyd's Syndicate Reports & Accounts**
 
 ---
@@ -74,30 +74,30 @@ Query Lloyd's syndicate data with SQL in DB Browser for SQLite.
 
 | Day | What I Did | File |
 | --- | --- | --- |
-| 7 | Created syndicate_clean database and first SELECT queries | `day-07-first-queries.sql` |
+| 7 | Created syndicate_financials database and first SELECT queries | `day-07-first-queries.sql` |
 | 8 | SELECT and WHERE — filter syndicates by combined ratio and profit | `day-08-where-queries.sql` |
 | 9 | COUNT and NULL — data completeness check on all key fields | `day-09-completeness-check.sql` |
 | 10 | GROUP BY — average combined ratio by managing agent | `day-10-groupby-analysis.sql` |
 | 11 | JOIN — created syndicate_details table, combined financial + business data | `day-11-join-queries.sql` |
 | 12 | CASE WHEN — automatic performance labels for every syndicate | `day-12-case-when.sql` |
-| **13** | **Revision — master quality check query across all key fields** | **`master-lloyds-quality-check.sql`** |
+| 13 | Revision — master quality check query covering all missing fields in one run | `master-lloyds-quality-check.sql` |
 
-**Phase 2 Result:** Can query Lloyd's data to find profitable syndicates, flag missing data, compare managing agents, join business context, automatically label every syndicate, and run a full quality check in one query.
+**Phase 2 Result:** Can query Lloyd's data to find profitable syndicates, flag missing data, compare managing agents, join business context, and automatically label every syndicate. Master quality check runs in one SQL line.
 
 ---
 
-### 🔲 Phase 3 — Power BI (Days 14–19)
+### 🔄 Phase 3 — Power BI (Days 14–19)
 
 Build a live Lloyd's performance dashboard.
 
-| Day | Focus |
-| --- | --- |
-| 14 | Connect Power BI to SQLite database |
-| 15 | KPI cards and DAX measures |
-| 16 | Drill-through by managing agent |
-| 17 | Slicers and data quality page |
-| 18 | Executive summary page |
-| 19 | Full rebuild revision |
+| Day | What I Did | Status |
+| --- | --- | --- |
+| 14 | Connected Power BI to SQLite. Built Page 1: GWP by syndicate, PBT by managing agent, combined ratio vs profit scatter chart | ✅ Done |
+| 15 | KPI cards and DAX measures | 🔲 Tomorrow |
+| 16 | Drill-through by managing agent | 🔲 Upcoming |
+| 17 | Slicers and data quality page | 🔲 Upcoming |
+| 18 | Executive summary page | 🔲 Upcoming |
+| 19 | Full rebuild revision | 🔲 Upcoming |
 
 ---
 
@@ -123,33 +123,25 @@ Present the Lloyd's system to a VP.
 
 ---
 
-## Day 13 Highlight — Master Quality Check Query
+## Day 14 Highlight — First Lloyd's Dashboard Built
 
-One query surfaces every record with any missing key field across the entire dataset. Run this after every new batch of syndicate data is loaded.
+Page 1 of the Lloyd's Syndicate Performance Dashboard is live in Power BI.
 
-```sql
-SELECT
-    syndicate_number,
-    managing_agent,
-    year_of_account,
-    CASE WHEN gwp_000s            IS NULL THEN 'MISSING' ELSE 'OK' END AS gwp_status,
-    CASE WHEN net_claims_000s     IS NULL THEN 'MISSING' ELSE 'OK' END AS claims_status,
-    CASE WHEN combined_ratio_pct  IS NULL THEN 'MISSING' ELSE 'OK' END AS ratio_status,
-    CASE WHEN pbt_000s            IS NULL THEN 'MISSING' ELSE 'OK' END AS profit_status
-FROM syndicate_clean
-WHERE
-    gwp_000s              IS NULL
-    OR net_claims_000s    IS NULL
-    OR combined_ratio_pct IS NULL
-    OR pbt_000s           IS NULL;
-```
+**Three visuals built on Page 1:**
 
-**Day 13 also covered all 5 revision tasks without notes:**
-- ✅ Show all loss-making syndicates
-- ✅ Count syndicates by managing agent
-- ✅ Find missing combined ratio
-- ✅ JOIN financials with details table
-- ✅ CASE WHEN performance labels
+| Visual | Type | What It Shows |
+| --- | --- | --- |
+| Gross Written Premium by Syndicate | Horizontal bar (blue) | Beasley leads market GWP at ~£1M |
+| Profit Before Tax by Managing Agent | Horizontal bar (green) | Beasley Furlonge Limited top performer |
+| Combined Ratio vs PBT | Scatter chart | Inverse relationship visible — lower CR = higher profit |
+
+**Key observations from the dashboard:**
+- Beasley is the largest syndicate by GWP and also top by PBT
+- ACE Underwriting and AEGIS London consistently in the top tier
+- Scatter chart confirms expected pattern: syndicates with combined ratio 60–85% showing highest profit
+- One syndicate near combined ratio 100 with elevated PBT — flagged for review in Day 15 quality checks
+
+Screenshot: `Phase-3-PowerBI/screenshots/day-14-first-lloyds-dashboard.png`
 
 ---
 
@@ -190,7 +182,8 @@ ORDER BY f.combined_ratio_pct ASC;
 
 | Table | Rows | What It Contains |
 | --- | --- | --- |
-| `syndicate_clean` | 7 | Financial data — GWP, CR, profit, claims |
+| `SQL Master files` | 7 | Financial data — GWP, CR, profit, claims |
+| `SQL Master files_fixed` | 7 | Same data with REAL number types |
 | `syndicate_details` | 6 | Business class, domicile, active status |
 
 ---
@@ -213,12 +206,14 @@ Insurance-Data-Automation/
 │       ├── day-09-completeness-check.sql
 │       ├── day-10-groupby-analysis.sql
 │       ├── day-11-join-queries.sql
+│       ├── day-11-progress.md
 │       ├── day-12-case-when.sql
 │       ├── day-12-progress.md
-│       └── master-lloyds-quality-check.sql   ← NEW DAY 13
+│       └── master-lloyds-quality-check.sql    ← Day 13
 │
 ├── Phase-3-PowerBI/
-│   └── screenshots/        ← coming Days 14–19
+│   └── screenshots/
+│       └── day-14-first-lloyds-dashboard.png  ← Day 14 ✅
 │
 ├── Phase-4-Automation/
 │   └── pipeline/           ← coming Days 20–26
@@ -239,7 +234,26 @@ Insurance-Data-Automation/
 | Validate data quality automatically | SQL | NULL checks, completeness rate |
 | Combine financial + business data | SQL JOIN | Two-table query with context |
 | Auto-label every syndicate | SQL CASE WHEN | Strong / Marginal / Loss / Significant Loss |
-| Run full quality check in one query | SQL Master Check | All missing fields flagged instantly |
+| Visualise Lloyd's performance | Power BI | Page 1 dashboard — GWP, PBT, scatter chart |
+
+---
+
+## Daily Log
+
+| Day | Date | Completed |
+| --- | --- | --- |
+| 1–3 | Retrospective | First Claude extractions documented |
+| 4 | Phase 1 | Master extraction prompt — Lloyd's PDF to table |
+| 5 | Phase 1 | Refined prompt with risk + business class |
+| 6 | Phase 1 | Prompt library built — under 60 sec per PDF |
+| 7 | Phase 2 | Database created, first SELECT queries |
+| 8 | Phase 2 | WHERE filters — profitable syndicates |
+| 9 | Phase 2 | NULL checks — completeness rate query |
+| 10 | Phase 2 | GROUP BY — managing agent analysis |
+| 11 | Phase 2 | JOIN — financial + business data combined |
+| 12 | Phase 2 | CASE WHEN — performance labels automated |
+| 13 | Phase 2 | Master quality check — all fields one query |
+| 14 | Phase 3 | **Power BI Page 1 built — GWP, PBT, scatter** |
 
 ---
 
