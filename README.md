@@ -21,7 +21,7 @@ This project builds a fully automated Lloyd's syndicate data pipeline:
 ## Tools Used
 
 | Tool | Purpose |
-| --- | --- |
+|------|---------|
 | Claude AI | Extract syndicate financials from PDFs |
 | ChatGPT | Write and explain SQL queries |
 | DB Browser for SQLite | Run and test SQL queries |
@@ -35,23 +35,19 @@ This project builds a fully automated Lloyd's syndicate data pipeline:
 
 All data extracted from real publicly available Lloyd's syndicate annual reports from lloyds.com
 
-| Field | SQL Column | Data Type | Why It Matters |
-| --- | --- | --- | --- |
-| Syndicate Number | syndicate_number | INTEGER | Unique identifier |
-| Syndicate Name | syndicate_name | TEXT | Full name of syndicate |
-| Managing Agent | managing_agent | TEXT | Who runs the syndicate |
-| Year of Account | year_of_account | INTEGER | Which underwriting year |
-| Report Type | report_type | TEXT | Annual Accounts or Closed UY (36 months) |
-| Gross Written Premium | gwp_000s | REAL | Total premiums before reinsurance |
-| Net Written Premium | nwp_000s | REAL | Premiums after reinsurance |
-| Net Claims Incurred | net_claims_000s | REAL | Claims net of reinsurance recoveries |
-| Net Operating Expenses | net_opex_000s | REAL | Running costs of the syndicate |
-| Profit / Loss Before Tax | pbt_000s | REAL | Bottom line performance |
-| Combined Ratio | combined_ratio_pct | REAL | Under 100 = profitable |
-| Total Assets | total_assets_000s | REAL | Total syndicate asset base |
-| Members Funds | members_funds_000s | REAL | Capital backing the syndicate |
-
-> All figures in £000s. NULL values present where data not available in source PDF.
+| Field | SQL Column | Why It Matters |
+|-------|-----------|----------------|
+| Syndicate Number | syndicate_number | Unique identifier |
+| Managing Agent | managing_agent | Who runs the syndicate |
+| Year of Account | year_of_account | Which underwriting year |
+| Gross Written Premium | gwp_000s | Total premiums before reinsurance |
+| Net Written Premium | nwp_000s | Premiums after reinsurance |
+| Net Claims Incurred | net_claims_000s | Claims net of reinsurance |
+| Net Operating Expenses | net_opex_000s | Running costs |
+| Profit / Loss Before Tax | pbt_000s | Bottom line performance |
+| Combined Ratio | combined_ratio_pct | Under 100 = profitable |
+| Total Assets | total_assets_000s | Total syndicate assets |
+| Members Funds | members_funds_000s | Capital backing |
 
 ---
 
@@ -61,12 +57,12 @@ All data extracted from real publicly available Lloyd's syndicate annual reports
 
 Extract Lloyd's syndicate data from PDFs automatically using Claude and ChatGPT.
 
-| Day | What I Did | File |
-| --- | --- | --- |
-| 1–3 | First extraction attempts — prompt building and refinement | `Phase-1-AI-Tools/prompts/` |
-| 4 | First Lloyd's PDF extraction using master prompt | `day-04-lloyds-extraction.md` |
-| 5 | Refined prompt — added risk and business class extraction | `day-05-refined-prompts.md` |
-| 6 | Speed test — full extraction in under 60 seconds | `Lloyds-Prompt-Library.md` |
+| Day | What I Did | Status |
+|-----|-----------|--------|
+| 1–3 | First extraction attempts — prompt building and refinement | ✅ Done |
+| 4 | First Lloyd's PDF extraction using master prompt | ✅ Done |
+| 5 | Refined prompt — added risk and business class extraction | ✅ Done |
+| 6 | Speed test — full extraction in under 60 seconds | ✅ Done |
 
 **Phase 1 Result:** Can extract all 12 financial fields from any Lloyd's syndicate PDF in under 60 seconds.
 
@@ -76,29 +72,29 @@ Extract Lloyd's syndicate data from PDFs automatically using Claude and ChatGPT.
 
 Query Lloyd's syndicate data with SQL in DB Browser for SQLite.
 
-| Day | What I Did | File |
-| --- | --- | --- |
-| 7 | Created syndicate_financials database and first SELECT queries | `day-07-first-queries.sql` |
-| 8 | SELECT and WHERE — filter syndicates by combined ratio and profit | `day-08-where-queries.sql` |
-| 9 | COUNT and NULL — data completeness check on all key fields | `day-09-completeness-check.sql` |
-| 10 | GROUP BY — average combined ratio by managing agent | `day-10-groupby-analysis.sql` |
-| 11 | JOIN — created syndicate_details table, combined financial + business data | `day-11-join-queries.sql` |
-| 12 | CASE WHEN — automatic performance labels for every syndicate | `day-12-case-when.sql` |
-| 13 | Revision — master quality check query covering all missing fields in one run | `master-lloyds-quality-check.sql` |
+| Day | What I Did | Status |
+|-----|-----------|--------|
+| 7 | Created syndicate_financials database and first SELECT queries | ✅ Done |
+| 8 | SELECT and WHERE — filter syndicates by combined ratio and profit | ✅ Done |
+| 9 | COUNT and NULL — data completeness check on all key fields | ✅ Done |
+| 10 | GROUP BY — average combined ratio by managing agent | ✅ Done |
+| 11 | JOIN — created syndicate_details table, combined financial + business data | ✅ Done |
+| 12 | CASE WHEN — automatic performance labels for every syndicate | ✅ Done |
+| 13 | Revision — master quality check query | ✅ Done |
 
-**Phase 2 Result:** Can query Lloyd's data to find profitable syndicates, flag missing data, compare managing agents, join business context, and automatically label every syndicate. Master quality check runs in one SQL line.
+**Phase 2 Result:** Can query Lloyd's data to find profitable syndicates, flag missing data, compare managing agents, join business context, and automatically label every syndicate.
 
 ---
 
-### 🔄 Phase 3 — Power BI (Days 14–19)
+### ✅ Phase 3 — Power BI (Days 14–19)
 
 Build a live Lloyd's performance dashboard.
 
 | Day | What I Did | Status |
-| --- | --- | --- |
-| 14 | Connected Power BI to SQLite. Built Page 1: GWP by syndicate, PBT by managing agent, combined ratio vs profit scatter chart | ✅ Done |
-| 15 | KPI cards and DAX measures | 🔲 Tomorrow |
-| 16 | Drill-through by managing agent | 🔲 Upcoming |
+|-----|-----------|--------|
+| 14 | Connected Power BI to SQLite database — first bar charts and scatter charts | ✅ Done |
+| 15 | KPI cards + DAX measures — 5 cards with conditional formatting | ✅ Done |
+| 16 | Drill-through — managing agent bar chart → syndicate detail page | ✅ Done |
 | 17 | Slicers and data quality page | 🔲 Upcoming |
 | 18 | Executive summary page | 🔲 Upcoming |
 | 19 | Full rebuild revision | 🔲 Upcoming |
@@ -110,7 +106,7 @@ Build a live Lloyd's performance dashboard.
 Connect everything into one automatic pipeline.
 
 | Day | Focus |
-| --- | --- |
+|-----|-------|
 | 20 | SQL views — save quality checks |
 | 21 | Power BI scheduled refresh |
 | 22 | Power BI alerts |
@@ -127,31 +123,49 @@ Present the Lloyd's system to a VP.
 
 ---
 
-## Day 14 Highlight — First Lloyd's Dashboard Built
+## Day 15 Highlight — KPI Cards + DAX Measures
 
-Page 1 of the Lloyd's Syndicate Performance Dashboard is live in Power BI.
+Five live KPI cards built using DAX — all update automatically when slicers filter the data.
 
-**Three visuals built on Page 1:**
+| KPI Card | DAX Measure | Formatting |
+|----------|-------------|-----------|
+| Total Market GWP | `SUM(syndicate_financials[gwp_000s])` | £000s |
+| Profitable Syndicates % | `DIVIDE(COUNTROWS(FILTER(...profit > 0)), COUNTROWS(...)) * 100` | % |
+| Average Combined Ratio | `AVERAGE(syndicate_financials[combined_ratio_pct])` | Red > 100 / Green < 95 |
+| Missing Data Count | `COUNTROWS(FILTER(...ISBLANK fields))` | Count |
+| Loss Making Syndicates | `COUNTROWS(FILTER(...profit < 0))` | Count |
 
-| Visual | Type | What It Shows |
-| --- | --- | --- |
-| Gross Written Premium by Syndicate | Horizontal bar (blue) | Beasley leads market GWP at ~£1M |
-| Profit Before Tax by Managing Agent | Horizontal bar (green) | Beasley Furlonge Limited top performer |
-| Combined Ratio vs PBT | Scatter chart | Inverse relationship visible — lower CR = higher profit |
+**Key learning:** Conditional formatting on the Combined Ratio card — turns red when the market average is above 100 (unprofitable), green when below 95 (strong underwriting profit).
 
-**Key observations from the dashboard:**
-- Beasley is the largest syndicate by GWP and also top by PBT
-- ACE Underwriting and AEGIS London consistently in the top tier
-- Scatter chart confirms expected pattern: syndicates with combined ratio 60–85% showing highest profit
-- One syndicate near combined ratio 100 with elevated PBT — flagged for review in Day 15 quality checks
+---
 
-Screenshot: `Phase-3-PowerBI/screenshots/day-14-first-lloyds-dashboard.png`
+## Day 16 Highlight — Drill-Through Navigation
+
+Built drill-through from managing agent bar chart to a dedicated syndicate detail page.
+
+**How it works:**
+1. Page 1 — bar chart showing Profit Before Tax by managing agent
+2. Right-click any bar → Drill through → Syndicate Detail
+3. Page 2 opens filtered to only that agent's syndicates
+4. Power BI adds "Back to report" button automatically
+
+**Setup:** Dragged `managing_agent` into the Drill through well on Page 2 (Visualizations pane). The field on Page 1's Y-axis must match the drill-through field exactly.
+
+**Real data visible in dashboard:**
+
+| Managing Agent | Profit Before Tax (£000s) |
+|----------------|--------------------------|
+| Beazley Furlonge Limited | 180,800 |
+| ACE Underwriting Agencies Ltd | 154,645 |
+| AEGIS Managing Agency Ltd | 60,500 |
+| Antares Managing Agency Limited | 18,386 |
+| RiverStone Managing Agency Limited | 17,029 |
 
 ---
 
 ## Day 12 Highlight — CASE WHEN Performance Labels
 
-Every syndicate now automatically classified — no manual work needed.
+Every syndicate automatically classified — no manual work needed.
 
 ```sql
 SELECT
@@ -169,10 +183,8 @@ FROM syndicate_clean f
 ORDER BY f.combined_ratio_pct ASC;
 ```
 
-### My Syndicates Labelled
-
 | Syndicate | Name | CR | Label |
-| --- | --- | --- | --- |
+|-----------|------|----|-------|
 | 2488 | ACE | 62 | Strong Performer |
 | 6110 | Pembroke | 68 | Strong Performer |
 | 623 | Beazley | 84 | Strong Performer |
@@ -184,26 +196,24 @@ ORDER BY f.combined_ratio_pct ASC;
 
 ## My Database — Current Status
 
-**Table: `syndicate_clean`** — 11 rows, 13 columns
+| Table | Rows | What It Contains |
+|-------|------|-----------------|
+| `syndicate_clean` | 7 | Financial data — GWP, CR, profit, claims |
+| `syndicate_details` | 6 | Business class, domicile, active status |
 
-| Syndicate | Name | Managing Agent | Year | Report Type | GWP (£000s) | CR % | PBT (£000s) |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| 623 | Beazley | Beazley Furlonge Limited | 2023 | Annual Accounts | 974,700 | 84.0 | 180,800 |
-| 2488 | ACE Underwriting | ACE Underwriting Agencies Ltd | 2014 | Annual Accounts | 375,327 | 62.0 | 154,645 |
-| 1225 | AEGIS London | AEGIS Managing Agency Ltd | 2014 | Annual Accounts | 371,000 | 84.0 | 60,500 |
-| 1274 | Antares | Antares Managing Agency Limited | 2014 | Annual Accounts | 250,576 | 92.0 | 18,386 |
-| 1856 | Arcus/Barbican | Barbican Managing Agency Limited | 2019 | Annual Accounts | 106,530 | 106.0 | 0 |
-| 2358 | Nephila | Nephila Syndicate Management Ltd | 2022 | Annual Accounts | 48,598 | 88.3 | 2,282 |
-| 780 | RiverStone | RiverStone Managing Agency Ltd | 2020 | Annual Accounts | 8,309 | NULL | 17,029 |
-| 1110 | R&Q | R&Q Syndicate Management Ltd | 2023 | Annual Accounts | 5,561 | NULL | 0 |
-| 1254 | Polo | Polo Managing Agency Limited | 2022 | Annual Accounts | 2,507 | NULL | 2,117 |
-| 6110 | Pembroke | Pembroke Managing Agency Ltd | 2015 | Annual Accounts | 1,140 | 68.0 | 1,242 |
-| 6110 | Pembroke | Pembroke Managing Agency Ltd | 2013 | Closed UY (36 months) | 40,988 | NULL | 922 |
+---
 
-**Data quality notes:**
-- 4 syndicates have NULL combined_ratio_pct — flagged by Day 9 completeness check query
-- net_claims_000s and net_opex_000s are 0 for most syndicates — data not available in source PDFs
-- report_type column added — distinguishes Annual Accounts from Closed Underwriting Year records
+## What I Can Do Right Now
+
+| Skill | Tool | What I Built |
+|-------|------|-------------|
+| Extract syndicate financials from any Lloyd's PDF | Claude AI | Under 60 seconds per PDF |
+| Query and filter syndicate data | SQL | WHERE, GROUP BY, JOIN, COUNT |
+| Validate data quality automatically | SQL | NULL checks, completeness rate |
+| Combine financial + business data | SQL JOIN | Two-table query with context |
+| Auto-label every syndicate | SQL CASE WHEN | Strong / Marginal / Loss / Significant Loss |
+| Build KPI dashboard | Power BI + DAX | 5 live KPI cards with conditional formatting |
+| Drill-through navigation | Power BI | Managing agent → syndicate detail |
 
 ---
 
@@ -225,56 +235,22 @@ Insurance-Data-Automation/
 │       ├── day-09-completeness-check.sql
 │       ├── day-10-groupby-analysis.sql
 │       ├── day-11-join-queries.sql
-│       ├── day-11-progress.md
 │       ├── day-12-case-when.sql
-│       ├── day-12-progress.md
-│       └── master-lloyds-quality-check.sql    ← Day 13
+│       └── master-lloyds-quality-check.sql
 │
 ├── Phase-3-PowerBI/
 │   └── screenshots/
-│       └── day-14-first-lloyds-dashboard.png  ← Day 14 ✅
+│       ├── day-14-first-dashboard.png
+│       ├── day-15-kpi-cards.png
+│       └── day-16-drill-through.png
 │
 ├── Phase-4-Automation/
 │   └── pipeline/           ← coming Days 20–26
 │
 ├── Phase-5-Job-Ready/      ← coming Days 27–30
 │
-├── syndicate_clean.csv     ← live database export (11 syndicates, 13 columns)
-│
 └── README.md
 ```
-
----
-
-## What I Can Do Right Now
-
-| Skill | Tool | What I Built |
-| --- | --- | --- |
-| Extract syndicate financials from any Lloyd's PDF | Claude AI | Under 60 seconds per PDF |
-| Query and filter syndicate data | SQL | WHERE, GROUP BY, JOIN, COUNT |
-| Validate data quality automatically | SQL | NULL checks, completeness rate |
-| Combine financial + business data | SQL JOIN | Two-table query with context |
-| Auto-label every syndicate | SQL CASE WHEN | Strong / Marginal / Loss / Significant Loss |
-| Visualise Lloyd's performance | Power BI | Page 1 dashboard — GWP, PBT, scatter chart |
-
----
-
-## Daily Log
-
-| Day | Date | Completed |
-| --- | --- | --- |
-| 1–3 | Retrospective | First Claude extractions documented |
-| 4 | Phase 1 | Master extraction prompt — Lloyd's PDF to table |
-| 5 | Phase 1 | Refined prompt with risk + business class |
-| 6 | Phase 1 | Prompt library built — under 60 sec per PDF |
-| 7 | Phase 2 | Database created, first SELECT queries |
-| 8 | Phase 2 | WHERE filters — profitable syndicates |
-| 9 | Phase 2 | NULL checks — completeness rate query |
-| 10 | Phase 2 | GROUP BY — managing agent analysis |
-| 11 | Phase 2 | JOIN — financial + business data combined |
-| 12 | Phase 2 | CASE WHEN — performance labels automated |
-| 13 | Phase 2 | Master quality check — all fields one query |
-| 14 | Phase 3 | **Power BI Page 1 built — GWP, PBT, scatter** |
 
 ---
 
