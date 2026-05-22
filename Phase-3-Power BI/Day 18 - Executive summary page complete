@@ -1,0 +1,17 @@
+Page 4 of the Lloyd's dashboard — the first page a VP sees.
+
+**Insight text (ChatGPT, based on SQL data):**
+> "The Lloyd's market remains broadly profitable, driven by strong combined ratios 
+> from Beazley, ACE, and AEGIS syndicates. Data quality flags noted — missing 
+> combined ratio values and a duplicate entry for Syndicate 6110 require resolution."
+
+**KPI cards built:**
+| Measure | Value |
+|---|---|
+| Syndicates analysed | 6 |
+| Strong performers (CR < 95) | 5 |
+| Average combined ratio | ~82.7% |
+| Data completeness | 100% |
+
+**Note:** Power BI Copilot not available — ChatGPT used for insight text, manual DAX 
+for all measures. Same output, full understanding of every number.
