@@ -258,16 +258,6 @@ Insurance-Data-Automation/
 
 ---
 
-## VP Interview — What I Say
-
-| Question | My Answer |
-|----------|----------|
-| On AI Tools | I use Claude to extract structured financial data from Lloyd's syndicate PDFs automatically. A PDF that took 20 minutes of manual reading now produces a clean table in under 60 seconds. |
-| On SQL | I use SQL to run automated quality checks — completeness checks, outlier detection, missing combined ratio flags — all in one master query. |
-| On Power BI | I built a 4-page Lloyd's dashboard — syndicate GWP and combined ratio, managing agent drill-through, data quality page with slicers, and an executive summary page. |
-| On Automation | I designed a pipeline where Claude extracts data from PDFs, SQL validates quality, exceptions route to a review queue, and Power BI refreshes daily at 8 AM. |
-| On Background | I come from an operations background which means I understand where data breaks and why. I used that knowledge to design validation logic that catches real problems automatically. |
-
 ---
 
 *Building in public — 30 days of real Lloyd's data, real tools, real automation.*
