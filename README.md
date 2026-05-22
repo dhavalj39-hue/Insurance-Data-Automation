@@ -1,6 +1,6 @@
 # Lloyd's Syndicate Data Automation Portfolio
 
-**SQL · Power BI · AI Tools (Claude & ChatGPT)**  
+**SQL · Power BI · AI Tools (Claude & ChatGPT)**
 **Real Data: Lloyd's Syndicate Reports & Accounts**
 
 ---
@@ -57,12 +57,12 @@ All data extracted from real publicly available Lloyd's syndicate annual reports
 
 Extract Lloyd's syndicate data from PDFs automatically using Claude and ChatGPT.
 
-| Day | What I Did | Status |
-|-----|-----------|--------|
-| 1–3 | First extraction attempts — prompt building and refinement | ✅ Done |
-| 4 | First Lloyd's PDF extraction using master prompt | ✅ Done |
-| 5 | Refined prompt — added risk and business class extraction | ✅ Done |
-| 6 | Speed test — full extraction in under 60 seconds | ✅ Done |
+| Day | What I Did | File |
+|-----|-----------|------|
+| 1–3 | First extraction attempts — prompt building and refinement | Phase-1-AI-Tools/prompts/ |
+| 4 | First Lloyd's PDF extraction using master prompt | day-04-lloyds-extraction.md |
+| 5 | Refined prompt — added risk and business class extraction | day-05-refined-prompts.md |
+| 6 | Speed test — full extraction in under 60 seconds | Lloyds-Prompt-Library.md |
 
 **Phase 1 Result:** Can extract all 12 financial fields from any Lloyd's syndicate PDF in under 60 seconds.
 
@@ -72,32 +72,32 @@ Extract Lloyd's syndicate data from PDFs automatically using Claude and ChatGPT.
 
 Query Lloyd's syndicate data with SQL in DB Browser for SQLite.
 
-| Day | What I Did | Status |
-|-----|-----------|--------|
-| 7 | Created syndicate_financials database and first SELECT queries | ✅ Done |
-| 8 | SELECT and WHERE — filter syndicates by combined ratio and profit | ✅ Done |
-| 9 | COUNT and NULL — data completeness check on all key fields | ✅ Done |
-| 10 | GROUP BY — average combined ratio by managing agent | ✅ Done |
-| 11 | JOIN — created syndicate_details table, combined financial + business data | ✅ Done |
-| 12 | CASE WHEN — automatic performance labels for every syndicate | ✅ Done |
-| 13 | Revision — master quality check query | ✅ Done |
+| Day | What I Did | File |
+|-----|-----------|------|
+| 7 | Created syndicate_financials database and first SELECT queries | day-07-first-queries.sql |
+| 8 | SELECT and WHERE — filter syndicates by combined ratio and profit | day-08-where-queries.sql |
+| 9 | COUNT and NULL — data completeness check on all key fields | day-09-completeness-check.sql |
+| 10 | GROUP BY — average combined ratio by managing agent | day-10-groupby-analysis.sql |
+| 11 | JOIN — created syndicate_details table, combined financial and business data | day-11-join-queries.sql |
+| 12 | CASE WHEN — automatic performance labels for every syndicate | day-12-case-when.sql |
+| 13 | Master quality check query — all missing fields in one run | master-lloyds-quality-check.sql |
 
 **Phase 2 Result:** Can query Lloyd's data to find profitable syndicates, flag missing data, compare managing agents, join business context, and automatically label every syndicate.
 
 ---
 
-### ✅ Phase 3 — Power BI (Days 14–19)
+### ✅ Phase 3 — Power BI Advanced (Days 14–19)
 
 Build a live Lloyd's performance dashboard.
 
 | Day | What I Did | Status |
 |-----|-----------|--------|
-| 14 | Connected Power BI to SQLite database — first bar charts and scatter charts | ✅ Done |
-| 15 | KPI cards + DAX measures — 5 cards with conditional formatting | ✅ Done |
-| 16 | Drill-through — managing agent bar chart → syndicate detail page | ✅ Done |
-| 17 | Slicers and data quality page | 🔲 Upcoming |
-| 18 | Executive summary page | 🔲 Upcoming |
-| 19 | Full rebuild revision | 🔲 Upcoming |
+| 14 | Connected Power BI to SQLite — first bar chart and scatter chart built | ✅ Done |
+| 15 | Built 5 KPI cards with DAX measures — conditional formatting on combined ratio | ✅ Done |
+| 16 | Drill-through built — click managing agent to see all their syndicates | ✅ Done |
+| 17 | Slicers + Data Quality Page — 3 slicers working, Performance Label DAX column created | ✅ Done |
+| 18 | Executive Summary Page — 4 KPIs, text summary, Top 3 Managing Agents | 🔲 Tomorrow |
+| 19 | Full dashboard rebuild revision — target under 45 minutes | 🔲 Upcoming |
 
 ---
 
@@ -107,13 +107,13 @@ Connect everything into one automatic pipeline.
 
 | Day | Focus |
 |-----|-------|
-| 20 | SQL views — save quality checks |
-| 21 | Power BI scheduled refresh |
-| 22 | Power BI alerts |
-| 23 | Power Automate email alerts |
-| 24 | Error log and quality trend |
-| 25 | Exception queue |
-| 26 | Full pipeline test |
+| 20 | SQL views — save quality checks as reusable views |
+| 21 | Power BI scheduled refresh — dashboard updates at 8 AM daily |
+| 22 | Power BI alerts — fire when combined ratio or missing data thresholds crossed |
+| 23 | Power Automate — auto email when alert fires |
+| 24 | Error log and quality trend chart |
+| 25 | Exception queue — flagged syndicates routed for manual review |
+| 26 | Full pipeline test end to end |
 
 ---
 
@@ -121,45 +121,47 @@ Connect everything into one automatic pipeline.
 
 Present the Lloyd's system to a VP.
 
----
-
-## Day 15 Highlight — KPI Cards + DAX Measures
-
-Five live KPI cards built using DAX — all update automatically when slicers filter the data.
-
-| KPI Card | DAX Measure | Formatting |
-|----------|-------------|-----------|
-| Total Market GWP | `SUM(syndicate_financials[gwp_000s])` | £000s |
-| Profitable Syndicates % | `DIVIDE(COUNTROWS(FILTER(...profit > 0)), COUNTROWS(...)) * 100` | % |
-| Average Combined Ratio | `AVERAGE(syndicate_financials[combined_ratio_pct])` | Red > 100 / Green < 95 |
-| Missing Data Count | `COUNTROWS(FILTER(...ISBLANK fields))` | Count |
-| Loss Making Syndicates | `COUNTROWS(FILTER(...profit < 0))` | Count |
-
-**Key learning:** Conditional formatting on the Combined Ratio card — turns red when the market average is above 100 (unprofitable), green when below 95 (strong underwriting profit).
+| Day | Focus |
+|-----|-------|
+| 27 | Write one-page system summary document |
+| 28 | Record 3-minute presentation on screen |
+| 29 | Mock interview — answer 5 VP questions using Lloyd's examples |
+| 30 | Full rehearsal — pipeline to dashboard to business value |
 
 ---
 
-## Day 16 Highlight — Drill-Through Navigation
+## Day 17 Highlight — Slicers + Data Quality Page
 
-Built drill-through from managing agent bar chart to a dedicated syndicate detail page.
+**What I built:** Page 3 Data Quality Dashboard with 3 working slicers.
 
-**How it works:**
-1. Page 1 — bar chart showing Profit Before Tax by managing agent
-2. Right-click any bar → Drill through → Syndicate Detail
-3. Page 2 opens filtered to only that agent's syndicates
-4. Power BI adds "Back to report" button automatically
+**Problem I solved:**
+Performance Label gave error — "non-measure field required for slicer".
 
-**Setup:** Dragged `managing_agent` into the Drill through well on Page 2 (Visualizations pane). The field on Page 1's Y-axis must match the drill-through field exactly.
+**Root cause:** I had created Performance Label as a Measure using Average Combined Ratio. Slicers only accept Columns, not Measures.
 
-**Real data visible in dashboard:**
+**Fix:** Created as a Calculated Column under Table tools → New Column using DAX SWITCH on the actual column value, not a measure.
 
-| Managing Agent | Profit Before Tax (£000s) |
-|----------------|--------------------------|
-| Beazley Furlonge Limited | 180,800 |
-| ACE Underwriting Agencies Ltd | 154,645 |
-| AEGIS Managing Agency Ltd | 60,500 |
-| Antares Managing Agency Limited | 18,386 |
-| RiverStone Managing Agency Limited | 17,029 |
+```dax
+Performance Label =
+SWITCH(
+    TRUE(),
+    syndicate_clean[combined_ratio_pct] < 95,  "Strong Performer",
+    syndicate_clean[combined_ratio_pct] < 100, "Marginal",
+    syndicate_clean[combined_ratio_pct] < 110, "Loss Making",
+    syndicate_clean[combined_ratio_pct] >= 110, "Significant Loss",
+    "No Data"
+)
+```
+
+**3 Slicers on Page 3 — Data Quality:**
+
+| Slicer | Column Used |
+|--------|------------|
+| Year of Account | year_of_account |
+| Managing Agent | managing_agent |
+| Performance Label | Performance Label (DAX calculated column) |
+
+**Key lesson:** Measure vs Column is one of the most common Power BI mistakes. Measures aggregate many rows into one number. Columns store a value per row. Slicers need one value per row — always use a Column.
 
 ---
 
@@ -173,18 +175,20 @@ SELECT
     f.syndicate_name,
     f.combined_ratio_pct,
     CASE
-        WHEN f.combined_ratio_pct IS NULL   THEN 'No Data'
-        WHEN f.combined_ratio_pct < 95      THEN 'Strong Performer'
-        WHEN f.combined_ratio_pct < 100     THEN 'Marginal'
-        WHEN f.combined_ratio_pct < 110     THEN 'Loss Making'
-        WHEN f.combined_ratio_pct >= 110    THEN 'Significant Loss'
+        WHEN f.combined_ratio_pct IS NULL    THEN 'No Data'
+        WHEN f.combined_ratio_pct < 95       THEN 'Strong Performer'
+        WHEN f.combined_ratio_pct < 100      THEN 'Marginal'
+        WHEN f.combined_ratio_pct < 110      THEN 'Loss Making'
+        WHEN f.combined_ratio_pct >= 110     THEN 'Significant Loss'
     END AS performance_label
 FROM syndicate_clean f
 ORDER BY f.combined_ratio_pct ASC;
 ```
 
-| Syndicate | Name | CR | Label |
-|-----------|------|----|-------|
+**My Syndicates Labelled:**
+
+| Syndicate | Name | Combined Ratio | Label |
+|-----------|------|---------------|-------|
 | 2488 | ACE | 62 | Strong Performer |
 | 6110 | Pembroke | 68 | Strong Performer |
 | 623 | Beazley | 84 | Strong Performer |
@@ -198,22 +202,8 @@ ORDER BY f.combined_ratio_pct ASC;
 
 | Table | Rows | What It Contains |
 |-------|------|-----------------|
-| `syndicate_clean` | 7 | Financial data — GWP, CR, profit, claims |
-| `syndicate_details` | 6 | Business class, domicile, active status |
-
----
-
-## What I Can Do Right Now
-
-| Skill | Tool | What I Built |
-|-------|------|-------------|
-| Extract syndicate financials from any Lloyd's PDF | Claude AI | Under 60 seconds per PDF |
-| Query and filter syndicate data | SQL | WHERE, GROUP BY, JOIN, COUNT |
-| Validate data quality automatically | SQL | NULL checks, completeness rate |
-| Combine financial + business data | SQL JOIN | Two-table query with context |
-| Auto-label every syndicate | SQL CASE WHEN | Strong / Marginal / Loss / Significant Loss |
-| Build KPI dashboard | Power BI + DAX | 5 live KPI cards with conditional formatting |
-| Drill-through navigation | Power BI | Managing agent → syndicate detail |
+| syndicate_clean | 7 | Financial data — GWP, combined ratio, profit, claims |
+| syndicate_details | 6 | Business class, domicile, active status |
 
 ---
 
@@ -242,15 +232,41 @@ Insurance-Data-Automation/
 │   └── screenshots/
 │       ├── day-14-first-dashboard.png
 │       ├── day-15-kpi-cards.png
-│       └── day-16-drill-through.png
+│       ├── day-16-drill-through.png
+│       └── day-17-slicers.png
 │
 ├── Phase-4-Automation/
-│   └── pipeline/           ← coming Days 20–26
+│   └── pipeline/               (coming Days 20–26)
 │
-├── Phase-5-Job-Ready/      ← coming Days 27–30
+├── Phase-5-Job-Ready/          (coming Days 27–30)
 │
 └── README.md
 ```
+
+---
+
+## What I Can Do Right Now
+
+| Skill | Tool | What I Built |
+|-------|------|-------------|
+| Extract syndicate financials from any Lloyd's PDF | Claude AI | Under 60 seconds per PDF |
+| Query and filter syndicate data | SQL | WHERE, GROUP BY, JOIN, COUNT |
+| Validate data quality automatically | SQL | NULL checks, completeness rate |
+| Auto-label every syndicate | SQL CASE WHEN | Strong / Marginal / Loss / Significant Loss |
+| Live performance dashboard — 3 pages complete | Power BI | KPIs, drill-through, slicers |
+| Data quality monitoring with filters | Power BI Page 3 | 3 slicers filtering completeness data live |
+
+---
+
+## VP Interview — What I Say
+
+| Question | My Answer |
+|----------|----------|
+| On AI Tools | I use Claude to extract structured financial data from Lloyd's syndicate PDFs automatically. A PDF that took 20 minutes of manual reading now produces a clean table in under 60 seconds. |
+| On SQL | I use SQL to run automated quality checks — completeness checks, outlier detection, missing combined ratio flags — all in one master query. |
+| On Power BI | I built a 4-page Lloyd's dashboard — syndicate GWP and combined ratio, managing agent drill-through, data quality page with slicers, and an executive summary page. |
+| On Automation | I designed a pipeline where Claude extracts data from PDFs, SQL validates quality, exceptions route to a review queue, and Power BI refreshes daily at 8 AM. |
+| On Background | I come from an operations background which means I understand where data breaks and why. I used that knowledge to design validation logic that catches real problems automatically. |
 
 ---
 
